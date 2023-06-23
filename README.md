@@ -1,0 +1,2 @@
+# stampede
+Stampede resizer project
