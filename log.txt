@@ -74,3 +74,17 @@
 27/12/2022 17:42: test (1).png processed in 0.12s
 27/12/2022 17:42: test (2).png processed in 0.17s
 27/12/2022 17:48: driver-side.png processed in 4.05s
+23/06/2023 13:31: testpic.png processed in 0.14s
+23/06/2023 13:34: testpic.png processed in 0.16s
+23/06/2023 13:37: testpic.png processed in 0.15s
+23/06/2023 13:38: testpic.png processed in 0.16s
+23/06/2023 13:39: testpic&B.png processed in 0.17s
+23/06/2023 13:40: testpic&E.png processed in 0.73s
+23/06/2023 13:47: testpic&E.png processed in 0.7s
+23/06/2023 13:49: testpic&E.png processed in 0.75s
+23/06/2023 13:51: testpic&E.png processed in 0.73s
+23/06/2023 13:56:32: UNEXPECTED ERROR PROCESSING testpic&E.png
+    Reason: [Errno 2] No such file or directory: 'img/testpic&E.png' -> 'img/zArchive/testpic&E.png'
+23/06/2023 13:58:14: UNEXPECTED ERROR PROCESSING testpic&E.png
+    Reason: [Errno 2] No such file or directory: 'img/testpic&E.png' -> 'img/zArchive/testpic&E.png'
+23/06/2023 13:59: testpic&E.png processed in 0.68s

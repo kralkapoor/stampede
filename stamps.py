@@ -81,6 +81,8 @@ def work_handler(file):
             except ValueError:
                 print(f'{file} in B&W format')
 
+            multi_colour : bool = False
+
             if is_coloured:
                 match no_extension[no_extension.index('&'):-1]:
                     case '&R':
@@ -93,17 +95,32 @@ def work_handler(file):
                         cropped = colour_sub(cropped, (255, 105, 180, 255)) #hot pink
                     case '&PP':
                         cropped = colour_sub(cropped, (148, 0, 211, 255)) #dark violet
+                    case '&E': 
+                        multi_colour = True
+                        colours = [
+                            ('R', (255, 0, 0, 255)), 
+                            ('G', (60, 179, 113, 255)),  
+                            ('B', (100, 149, 237, 255)),  
+                            ('P', (255, 105, 180, 255)),  
+                            ('PP', (148, 0, 211, 255))  
+                            ]
+                        for colour_suffix, colour in colours:
+                            colour_cropped = colour_sub(cropped.copy(), colour)
+                            colour_cropped = standardise_size(colour_cropped)
+                            colour_as_png = f'{no_extension}{colour_suffix}.png'
+                            save_image(colour_cropped, colour_as_png)
+                        archive_image(file)
             else:
                 cropped = colour_sub(cropped, (0, 0, 0, 255)) #black (darken the grey pixels)
 
-            # STANDARDISE THE SIZES OF STAMPS
-            cropped = cropped.resize(standard_size)
-            #################################
+            if not multi_colour:
+                # STANDARDISE THE SIZES OF STAMPS
+                cropped = standardise_size(cropped)
+                # Save image
+                save_image(cropped, as_png)
+                archive_image(as_png)
 
-            cropped.save(
-                f'img/Processed/resized_{as_png}', quality=quality_val)
-            os.replace(f'img/{as_png}', f'img/zArchive/{as_png}')
-
+            # Write to log
             end = time.time()
 
             with open('log.txt', 'a') as log:
@@ -115,6 +132,25 @@ def work_handler(file):
                 log.write(
                     f'{now.strftime("%d/%m/%Y %H:%M:%S")}: UNEXPECTED ERROR PROCESSING {as_png}\n')
                 log.write(f'    Reason: {e}\n')
+
+
+def standardise_size(cropped_image):
+    try:
+        res = cropped_image.resize(standard_size)
+        return res 
+    except:
+        print('exception on standardise_size')
+        return
+
+def save_image(image_to_save,file_name_with_extension):
+    try:
+        image_to_save.save(f'img/Processed/resized_{file_name_with_extension}', quality=quality_val)
+    except Exception as e:
+        print('exception on save_image')
+        print(e)
+        
+def archive_image(image_to_archive):
+    os.replace(f'img/{image_to_archive}', f'img/zArchive/{image_to_archive}')
 
 def pool_handler():
     # p = Pool(cores)
