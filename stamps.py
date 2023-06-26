@@ -95,14 +95,15 @@ def work_handler(file):
                         cropped = colour_sub(cropped, (255, 105, 180, 255)) #hot pink
                     case '&PP':
                         cropped = colour_sub(cropped, (148, 0, 211, 255)) #dark violet
-                    case '&E': 
+                    case '&E': #make a copy for all colours - TIDY UP
                         multi_colour = True
                         colours = [
                             ('R', (255, 0, 0, 255)), 
                             ('G', (60, 179, 113, 255)),  
                             ('B', (100, 149, 237, 255)),  
                             ('P', (255, 105, 180, 255)),  
-                            ('PP', (148, 0, 211, 255))  
+                            ('PP', (148, 0, 211, 255)),
+                            ('Black', (0,0,0,255))
                             ]
                         for colour_suffix, colour in colours:
                             colour_cropped = colour_sub(cropped.copy(), colour)
@@ -140,21 +141,21 @@ def standardise_size(cropped_image):
         return res 
     except:
         print('exception on standardise_size')
-        return
+    return
 
 def save_image(image_to_save,file_name_with_extension):
     try:
         image_to_save.save(f'img/Processed/resized_{file_name_with_extension}', quality=quality_val)
     except Exception as e:
         print('exception on save_image')
-        print(e)
+    return
         
 def archive_image(image_to_archive):
     os.replace(f'img/{image_to_archive}', f'img/zArchive/{image_to_archive}')
 
 def pool_handler():
     # p = Pool(cores)
-    p = Pool()
+    p = Pool() #default processes = cpu_count()
     p.map(work_handler, imgs_for_processing)
 
 if __name__ == '__main__':
