@@ -3,6 +3,7 @@ from datetime import datetime
 import os
 from PIL import Image, ImageDraw
 import time
+from standardColours import colours
 
 # OS variables
 img_dir = os.listdir('./img')
@@ -86,33 +87,26 @@ def work_handler(file):
             if is_coloured:
                 match no_extension[no_extension.index('&'):-1]:
                     case '&R':
-                        cropped = colour_sub(cropped, (255, 0, 0, 255)) #red
+                        cropped = colour_sub(cropped, colours['R']) #red
                     case '&G':
-                        cropped = colour_sub(cropped, (60, 179, 113, 255)) #medium sea green
+                        cropped = colour_sub(cropped, colours['G']) #medium sea green
                     case '&B':
-                        cropped = colour_sub(cropped, (100, 149, 237, 255)) #cornflour blue
+                        cropped = colour_sub(cropped, colours['B']) #cornflour blue
                     case '&P':
-                        cropped = colour_sub(cropped, (255, 105, 180, 255)) #hot pink
+                        cropped = colour_sub(cropped, colours['P']) #hot pink
                     case '&PP':
-                        cropped = colour_sub(cropped, (148, 0, 211, 255)) #dark violet
-                    case '&E': #make a copy for all colours - TIDY UP
+                        cropped = colour_sub(cropped, colours['PP']) #dark violet
+                    case '&E': #make a copy for all colours 
                         multi_colour = True
-                        colours = [
-                            ('R', (255, 0, 0, 255)), 
-                            ('G', (60, 179, 113, 255)),  
-                            ('B', (100, 149, 237, 255)),  
-                            ('P', (255, 105, 180, 255)),  
-                            ('PP', (148, 0, 211, 255)),
-                            ('Black', (0,0,0,255))
-                            ]
-                        for colour_suffix, colour in colours:
+                        # Need to iterate over all key:value pairs in std colours
+                        for code, colour in colours.items():
                             colour_cropped = colour_sub(cropped.copy(), colour)
                             colour_cropped = standardise_size(colour_cropped)
-                            colour_as_png = f'{no_extension}{colour_suffix}.png'
+                            colour_as_png = f'{no_extension}{code}.png'
                             save_image(colour_cropped, colour_as_png)
                         archive_image(file)
             else:
-                cropped = colour_sub(cropped, (0, 0, 0, 255)) #black (darken the grey pixels)
+                cropped = colour_sub(cropped, colours['Black']) #black (darken the grey pixels)
 
             if not multi_colour:
                 # STANDARDISE THE SIZES OF STAMPS

@@ -89,3 +89,6 @@
     Reason: [Errno 2] No such file or directory: 'img/testpic&E.png' -> 'img/zArchive/testpic&E.png'
 23/06/2023 13:59: testpic&E.png processed in 0.68s
 24/06/2023 06:31: testpic&E.png processed in 0.71s
+26/06/2023 22:09: testpic&E.png processed in 0.94s
+26/06/2023 22:09:57: UNEXPECTED ERROR PROCESSING purple_grain&E.png
+    Reason: [Errno 2] No such file or directory: 'img/purple_grain&E.jpg' -> 'img/zArchive/purple_grain&E.jpg'

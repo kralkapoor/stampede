@@ -5,8 +5,13 @@ img_dir = os.listdir(f'C:/Users/k4rlk/Desktop/stampede-resizer/img') # FP
 
 rects = [img for img in img_dir if img.endswith('png') or img.endswith('PNG')]
 
-std_colours = (((0, 0, 0, 255),'black'),((255, 0, 0, 255),'red'),((60, 179, 113, 255),'mediumseagreen'),((100, 149, 237, 255),'cornflourblue'),((255, 105, 180, 255),'hotpink'),((148, 0, 211, 255),'darkviolet'))
-
+std_colours = (
+    ((0, 0, 0, 255),'black'),
+    ((255, 0, 0, 255),'red'),
+    ((60, 179, 113, 255),'mediumseagreen'),
+    ((100, 149, 237, 255),'cornflourblue'),
+    ((255, 105, 180, 255),'hotpink'),
+    ((148, 0, 211, 255),'darkviolet'))
 
 for img in rects:
     
