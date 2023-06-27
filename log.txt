@@ -92,3 +92,16 @@
 26/06/2023 22:09: testpic&E.png processed in 0.94s
 26/06/2023 22:09:57: UNEXPECTED ERROR PROCESSING purple_grain&E.png
     Reason: [Errno 2] No such file or directory: 'img/purple_grain&E.jpg' -> 'img/zArchive/purple_grain&E.jpg'
+27/06/2023 22:29: rect rect.png processed in 0.12s
+27/06/2023 22:29: rect rect.png processed in 0.22s
+27/06/2023 22:29: rect rect.png processed in 0.33s
+27/06/2023 22:29: rect rect.png processed in 0.43s
+27/06/2023 22:29: rect rect.png processed in 0.53s
+27/06/2023 22:29: rect rect.png processed in 0.65s
+27/06/2023 22:31: rect sq.png processed in 0.13s
+27/06/2023 22:31: rect sq.png processed in 0.25s
+27/06/2023 22:31: rect sq.png processed in 0.37s
+27/06/2023 22:31: rect sq.png processed in 0.48s
+27/06/2023 22:31: rect sq.png processed in 0.58s
+27/06/2023 22:31: rect sq.png processed in 0.7s
+27/06/2023 22:42: rect sq&G.png processed in 0.1s

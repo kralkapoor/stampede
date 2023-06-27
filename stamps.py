@@ -3,7 +3,8 @@ from datetime import datetime
 import os
 from PIL import Image, ImageDraw
 import time
-from standardColours import colours
+from staticDicts import colours
+from initDirs import init_all
 
 # OS variables
 img_dir = os.listdir('./img')
@@ -80,7 +81,7 @@ def work_handler(file):
             try:
                 is_coloured = no_extension.count('&') == 1
             except ValueError:
-                print(f'{file} in B&W format')
+                print(f'{file} colour not specified. Processing in B&W format')
 
             multi_colour : bool = False
 
@@ -120,12 +121,12 @@ def work_handler(file):
 
             with open('log.txt', 'a') as log:
                 log.write(
-                    f'{now.strftime("%d/%m/%Y %H:%M")}: {as_png} processed in {round(end-start,2)}s\n')
+                    f'{now.strftime("%d/%m/%Y %H:%M")}: circle {as_png} processed in {round(end-start,2)}s\n')
 
         except Exception as e:
             with open('log.txt', 'a') as log:
                 log.write(
-                    f'{now.strftime("%d/%m/%Y %H:%M:%S")}: UNEXPECTED ERROR PROCESSING {as_png}\n')
+                    f'{now.strftime("%d/%m/%Y %H:%M")}: UNEXPECTED ERROR PROCESSING {as_png}\n')
                 log.write(f'    Reason: {e}\n')
 
 
@@ -153,4 +154,5 @@ def pool_handler():
     p.map(work_handler, imgs_for_processing)
 
 if __name__ == '__main__':
+    init_all()
     pool_handler()

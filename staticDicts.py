@@ -1,4 +1,4 @@
-# House all of the colours used by stampede here
+# standard mappings here
 
 colours = {
     'R' : (255,0,0,255),        # Red
@@ -9,9 +9,12 @@ colours = {
     'Black' : (0,0,0,255),      # Just Black
 }
 
-
-    
-if __name__ == '__main__':
-    for key, val in colours.items():
-        if val == (148, 0, 211, 255):
-            print(key)
+rect_paths = {
+    'Custom' : '1 Custom',
+    'Black' : '2 Black',
+    'R' : '3 Red',   
+    'P' : '4 Hot Pink',   
+    'G' : '5 Seagreen',         
+    'B' : '6 Cornflour Blue',
+    'PP' : '7 Dark Violet',
+}
