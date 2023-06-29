@@ -3,8 +3,8 @@ from datetime import datetime
 import os
 from PIL import Image, ImageDraw
 import time
-from staticDicts import colours
-from initDirs import init_all
+from config.staticDicts import colours
+from config.initDirs import init_all
 
 # OS variables
 img_dir = os.listdir('./img')

@@ -1,5 +1,5 @@
 # Project specific
-log.txt
+config/log.txt
 img/
 
 # Byte-compiled / optimized / DLL files
