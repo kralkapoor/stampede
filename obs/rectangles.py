@@ -3,9 +3,9 @@ from datetime import datetime
 import os
 from PIL import Image, ImageDraw
 import time
-from staticDicts import colours, rect_paths
+from config.staticDicts import colours, rect_paths
 from stamps import colour_sub
-from initDirs import init_all
+from config.initDirs import init_all
 
 # OS variables
 img_dir = os.listdir('./img')
