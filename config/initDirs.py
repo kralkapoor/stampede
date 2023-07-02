@@ -19,12 +19,10 @@ def init_rect_dirs():
         except FileExistsError:
             pass
 
-# def init_circle_dirs():
-#     pass
-
 def init_all():
     init_base_dirs()
     init_rect_dirs()
     
-# if __name__ == '__main__':
-#     init_all()
+if __name__ == '__main__':
+    # Manually init if required
+    init_all()

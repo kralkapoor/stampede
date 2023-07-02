@@ -392,6 +392,6 @@ class Stickers(ImageProcessor):
         return
     
     
-if __name__ == '__main__':
-    obj = Circles()
-    obj.pool_handler()
+# if __name__ == '__main__':
+#     obj = Circles()
+#     obj.pool_handler()
