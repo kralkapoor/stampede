@@ -4,7 +4,7 @@ import time
 import os
 from PIL import Image, ImageDraw
 from config.initDirs import init_all
-from config.staticDicts import colours, rect_paths, valid_formats_cfg, image_quality_cfg, standard_img_size_cfg
+from config.staticDicts import colours, rect_paths, valid_formats_cfg, image_quality_cfg, standard_img_size_cfg, log_location
 
 class ImageProcessor:
     def __init__(self):
@@ -18,7 +18,9 @@ class ImageProcessor:
         self.curr_canvas_size = (0, 0)
         self.now = datetime.now()
         self.img_dir = os.listdir('./img')
+        self.log = log_location
         #self.max_cores = multiprocessing.cpu_count()
+        print(self.log)
         
     def fetch_imgs(self):
         """
@@ -135,7 +137,7 @@ class Circles(ImageProcessor):
             try:
                 os.rename(f'img/{file}', f'img/{as_png}')
             except FileExistsError:
-                with open('log.txt', 'a') as log:
+                with open(self.log, 'a') as log:
                     log.write(
                         f'{self.now.strftime("%d/%m/%Y, %H:%M:%S")}: "{as_png}" ERROR! FILE ALREADY EXISTS\n')
                 return
@@ -208,10 +210,10 @@ class Circles(ImageProcessor):
 
                 # Write to log
                 end = time.time()
-                self.append_to_log(start, time.time(),as_png,'log.txt')
+                self.append_to_log(start, time.time(),as_png,self.log)
 
             except Exception as e:
-                with open('log.txt', 'a') as log:
+                with open(self.log, 'a') as log:
                     log.write(
                         f'{self.now.strftime("%d/%m/%Y %H:%M")}: UNEXPECTED ERROR PROCESSING {as_png}\n')
                     log.write(f'    Reason: {e}\n')
@@ -232,7 +234,7 @@ class Rectangles(ImageProcessor):
         try:
             os.rename(f'img/{file}', f'img/{as_png}')
         except FileExistsError:
-            with open('log.txt', 'a') as log:
+            with open(self.log, 'a') as log:
                 log.write(
                     f'{self.now.strftime("%d/%m/%Y, %H:%M:%S")}: "{as_png}" ERROR! FILE ALREADY EXISTS\n')
             return
@@ -269,7 +271,7 @@ class Rectangles(ImageProcessor):
                 canvas.save(f'img/Processed/Rectangles/{path}/{as_png}',quality=100)
                 
                 # Write to log
-                self.append_to_log(start, time.time(),as_png,'log.txt')
+                self.append_to_log(start, time.time(),as_png,self.log)
 
             # If it's not a custom stamp, then create a copy in each standard colour    
             else:
@@ -277,12 +279,12 @@ class Rectangles(ImageProcessor):
                     rect_img = self.colour_sub(canvas.copy(), colour_value)
                     rect_img.save(f'img/Processed/Rectangles/{self.rect_paths[code]}/{no_extension[:-1]}&{code}.png',quality=self.quality_val)
                     
-                self.append_to_log(start,time.time(),as_png,'log.txt')
+                self.append_to_log(start,time.time(),as_png,self.log)
             # Archive 
             os.replace(f'img/{as_png}',f'img/zArchive/{as_png}')
             
         except Exception as e:
-            with open('log.txt', 'a') as log:
+            with open(self.log, 'a') as log:
                 log.write(
                     f'{self.now.strftime("%d/%m/%Y %H:%M")}: UNEXPECTED ERROR PROCESSING {as_png}\n')
                 log.write(f'    Reason: {e}\n')
@@ -388,3 +390,8 @@ class Stickers(ImageProcessor):
         except Exception as e:
             print('exception on save_image')
         return
+    
+    
+if __name__ == '__main__':
+    obj = Circles()
+    obj.pool_handler()
