@@ -20,7 +20,6 @@ class ImageProcessor:
         self.img_dir = os.listdir('./img')
         self.log = log_location
         #self.max_cores = multiprocessing.cpu_count()
-        print(self.log)
         
     def fetch_imgs(self):
         """
@@ -289,7 +288,6 @@ class Rectangles(ImageProcessor):
                     f'{self.now.strftime("%d/%m/%Y %H:%M")}: UNEXPECTED ERROR PROCESSING {as_png}\n')
                 log.write(f'    Reason: {e}\n')
 
-
 # new class for stickers - REFACTOR!!!!!!!
 class Stickers(ImageProcessor):
     
@@ -392,6 +390,8 @@ class Stickers(ImageProcessor):
         return
     
     
-# if __name__ == '__main__':
-#     obj = Circles()
-#     obj.pool_handler()
+if __name__ == '__main__':
+    # obj = Circles()
+    # obj.pool_handler()
+    # os.system('xdg-open img/')
+    pass
