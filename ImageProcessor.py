@@ -4,7 +4,7 @@ import time
 import os
 from PIL import Image, ImageDraw
 from config.initDirs import init_all
-from config.staticDicts import colours, rect_paths, valid_formats_cfg, image_quality_cfg, standard_img_size_cfg, log_location
+from config.staticDicts import colours, rect_paths, valid_formats_cfg, image_quality_cfg, standard_img_size_cfg, log_location, circle_dir_on_process, rectangle_dir_on_process, sticker_dir_on_process
 
 class ImageProcessor:
     def __init__(self):
@@ -20,7 +20,6 @@ class ImageProcessor:
         self.img_dir = os.listdir('./img')
         self.log = log_location
         #self.max_cores = multiprocessing.cpu_count()
-        print(self.log)
         
     def fetch_imgs(self):
         """
@@ -106,7 +105,10 @@ class Circles(ImageProcessor):
             file_name_with_extension (str): New file name, with the filetype extension (e.g. png)
         """
         try:
-            image_to_save.save(f'img/Processed/resized_{file_name_with_extension}', quality=self.quality_val)
+            image_to_save.save(f'img/Processed/Circles/resized_{file_name_with_extension}', quality=self.quality_val)
+            if os.name == 'nt':
+                abs_path = os.path.realpath(circle_dir_on_process)
+                os.startfile(abs_path)
         except Exception as e:
             print('exception on save_image')
         return
@@ -269,6 +271,9 @@ class Rectangles(ImageProcessor):
                         canvas = self.colour_sub(canvas, colours['Black']) #default to black if not specified
                         
                 canvas.save(f'img/Processed/Rectangles/{path}/{as_png}',quality=100)
+                if os.name == 'nt':
+                    abs_path = os.path.realpath(rectangle_dir_on_process)
+                    os.startfile(abs_path)
                 
                 # Write to log
                 self.append_to_log(start, time.time(),as_png,self.log)
@@ -288,7 +293,6 @@ class Rectangles(ImageProcessor):
                 log.write(
                     f'{self.now.strftime("%d/%m/%Y %H:%M")}: UNEXPECTED ERROR PROCESSING {as_png}\n')
                 log.write(f'    Reason: {e}\n')
-
 
 # new class for stickers - REFACTOR!!!!!!!
 class Stickers(ImageProcessor):
@@ -392,6 +396,5 @@ class Stickers(ImageProcessor):
         return
     
     
-# if __name__ == '__main__':
-#     obj = Circles()
-#     obj.pool_handler()
+if __name__ == '__main__':
+    pass

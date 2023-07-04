@@ -2,6 +2,9 @@
 config/log.txt
 img/
 
+# vscode
+.vscode/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
