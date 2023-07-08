@@ -1,7 +1,9 @@
 # Project specific
 config/log.txt
 img/
-
+venv/
+env/
+virtualenv/
 # vscode
 .vscode/
 
