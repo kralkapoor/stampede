@@ -2,7 +2,7 @@ import os
 from config.staticDicts import rect_paths
 
 def init_base_dirs():
-    dirs = (f'img/',f'img/Processed',f'img/zArchive',f'img/Processed/Rectangles',f'img/Processed/Circles')
+    dirs = (f'img/',f'img/Processed',f'img/zArchive',f'img/Processed/Rectangles',f'img/Processed/Circles',f'img/Processed/Stickers')
     for dir in dirs:
         try:
             os.mkdir(dir)
@@ -24,5 +24,5 @@ def init_all():
     init_rect_dirs()
     
 if __name__ == '__main__':
-    # Manually init if required
-    init_all()
+    # relative pathing issue, so this should only be run from the GUI
+    pass

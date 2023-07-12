@@ -1,5 +1,6 @@
 import tkinter as tk
-from tkinter import PhotoImage
+# import config.staticDicts
+# from tkinter import PhotoImage
 from PIL import ImageTk, Image
 from ImageProcessor import Circles, Rectangles, Stickers
 
@@ -44,8 +45,8 @@ class GUI:
         exit(0)
 
     def process_stickers(self):
-        # self.stamps.pool_handler()
-        pass
+        self.stamps.pool_handler()
+        exit(0)
 
 if __name__ == '__main__':
     root = tk.Tk()
