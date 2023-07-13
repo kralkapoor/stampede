@@ -199,7 +199,7 @@ class Circles(ImageProcessor):
                                 colour_cropped = self._standardise_size(colour_cropped)
                                 colour_as_png = f'{no_extension}{code}.png'
                                 self._save_image(colour_cropped, colour_as_png)
-                            self.archive_image(file)
+                            self.archive_image(as_png)
                 else:
                     cropped = self.colour_sub(cropped, colours['Black']) #black (darken the grey pixels)
 
@@ -286,7 +286,8 @@ class Rectangles(ImageProcessor):
                     
                 self.append_to_log(start,time.time(),as_png,self.log)
             # Archive 
-            os.replace(f'img/{as_png}',f'img/zArchive/{as_png}')
+            # os.replace(f'img/{as_png}',f'img/zArchive/{as_png}')
+            self.archive_image(as_png)
             
         except Exception as e:
             with open(self.log, 'a') as log:
