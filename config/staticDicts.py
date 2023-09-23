@@ -21,7 +21,7 @@ rect_paths = {
 
 valid_formats_cfg = ('jpg', 'JPG', 'PNG', 'png')
 image_quality_cfg = 100
-standard_img_size_cfg = (200,200)
+standard_img_size_cfg = None #(200,200)
 log_location = 'config/log.txt'
 
 circle_dir_on_process = 'img/Processed/Circles'

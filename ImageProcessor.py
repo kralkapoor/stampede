@@ -124,6 +124,11 @@ class Circles(ImageProcessor):
         Returns:
             Either the newly cropped image or nothing on exception
         """
+        
+        # if the cfg size is not specified, just take the smallest dimension for best resolution
+        if self.standard_size == None:
+            self.standard_size = (min(cropped_image.size),min(cropped_image.size))
+        
         try:
             res = cropped_image.resize(self.standard_size)
             return res
