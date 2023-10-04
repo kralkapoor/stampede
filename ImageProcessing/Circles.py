@@ -1,10 +1,10 @@
-from ImageProcessing import ImageProcessor
+from ImageProcessing.ImageProcessor import ImageHandler
 import time
 import os
 from PIL import Image, ImageDraw
-from config.staticDicts import colours, circle_dir_on_process
+from settings.staticDicts import colours, circle_dir_on_process
 
-class Circles(ImageProcessor):
+class Circles(ImageHandler):
 
     def __init__(self):
         super().__init__()

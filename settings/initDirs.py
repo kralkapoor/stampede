@@ -1,5 +1,5 @@
 import os
-from config.staticDicts import rect_paths
+from settings.staticDicts import rect_paths
 
 def init_base_dirs():
     dirs = (f'img/',f'img/Processed',f'img/zArchive',f'img/Processed/Rectangles',f'img/Processed/Circles',f'img/Processed/Stickers')
