@@ -2,7 +2,9 @@ import tkinter as tk
 # import config.staticDicts
 # from tkinter import PhotoImage
 from PIL import ImageTk, Image
-from ImageProcessor import Circles, Rectangles, Stickers
+from ImageProcessing.Circles import Circles
+from ImageProcessing.Rectangles import Rectangles
+from ImageProcessing.CircleStickers import CircleStickers
 
 class GUI:
     def __init__(self, master):
@@ -10,13 +12,13 @@ class GUI:
         master.title("Stampede Resizer")
         self.rects = Rectangles()
         self.circles = Circles()
-        self.stamps = Stickers()
+        self.stamps = CircleStickers()
 
         # Set the background color to black
         master.configure(bg='white')
 
         # Load logo and button images
-        self.logo_image = ImageTk.PhotoImage(Image.open("config/assets/logo.png"))
+        self.logo_image = ImageTk.PhotoImage(Image.open("settings/assets/logo.png"))
 
         # Logo
         self.logo_label = tk.Label(master, image=self.logo_image, bg='white')
