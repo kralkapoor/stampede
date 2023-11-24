@@ -2,13 +2,18 @@ from ImageProcessing.ImageProcessor import ImageHandler
 import time
 import os
 from PIL import Image, ImageDraw
-from settings.staticDicts import colours, circle_dir_on_process, sticker_dir_on_process
+from settings.staticDicts import colours, sticker_dir_on_process
 
 # new class for stickers
 class CircleStickers(ImageHandler):
 
     def __init__(self):
         super().__init__()
+        
+    def pool_handler(self):
+        super().pool_handler()
+        self.open_save_destination()
+        return
 
     def _save_image(self, image_to_save, file_name_with_extension):
         """Saves the image for stickers
@@ -19,10 +24,6 @@ class CircleStickers(ImageHandler):
         """
         try:
             image_to_save.save(f'img/Processed/Stickers/resized_{file_name_with_extension}', quality=self.quality_val)
-            # Moved to new func
-            # if os.name == 'nt':
-            #     abs_path = os.path.realpath(sticker_dir_on_process)
-            #     os.startfile(abs_path)
         except Exception as e:
             print('exception on save_image')
         return
@@ -35,7 +36,7 @@ class CircleStickers(ImageHandler):
             except Exception as e:
                 print("something wrong with opening explorer on open save destination")  
         return  
-
+    
     # override super.work_handler
     def work_handler(self, file):
         # Convert valid formats to png to allow RGBA
@@ -103,16 +104,9 @@ class CircleStickers(ImageHandler):
                         canvas = self.colour_sub(canvas, colours['Black'])  # default to black if not specified
 
             self._save_image(canvas, as_png)
-            
-            # moved to new func
-            # if os.name == 'nt':
-            #     abs_path = os.path.realpath(circle_dir_on_process)
-            #     os.startfile(abs_path)
-            
-            self.open_save_destination()
-
             self.archive_image(as_png)
-            self.append_to_log(start, time.time(), as_png, self.log)
+            
+            self.append_processed_result_to_log(start, time.time(), as_png, self.log)
 
         except Exception as e:
             with open('log.txt', 'a') as log:

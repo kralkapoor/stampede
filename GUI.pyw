@@ -12,7 +12,7 @@ class GUI:
         master.title("Stampede Resizer")
         self.rects = Rectangles()
         self.circles = Circles()
-        self.stamps = CircleStickers()
+        self.stickers = CircleStickers()
 
         # Set the background color to black
         master.configure(bg='white')
@@ -47,7 +47,7 @@ class GUI:
         exit(0)
 
     def process_stickers(self):
-        self.stamps.pool_handler()
+        self.stickers.pool_handler()
         exit(0)
 
 if __name__ == '__main__':

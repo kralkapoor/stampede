@@ -10,6 +10,11 @@ class Rectangles(ImageHandler):
         super().__init__()
         self.rect_paths = rect_paths
         
+    def pool_handler(self):
+        super().pool_handler()
+        self.open_save_destination()
+        return
+        
     def open_save_destination(self) -> None:
         if os.name == 'nt':
             abs_path = os.path.realpath(rectangle_dir_on_process)
@@ -70,7 +75,7 @@ class Rectangles(ImageHandler):
                 #     os.startfile(abs_path)
 
                 # Write to log
-                self.append_to_log(start, time.time(), as_png, self.log)
+                self.append_processed_result_to_log(start, time.time(), as_png, self.log)
 
             # If it's not a custom stamp, then create a copy in each standard colour    
             else:
@@ -79,7 +84,7 @@ class Rectangles(ImageHandler):
                     rect_img.save(f'img/Processed/Rectangles/{self.rect_paths[code]}/{no_extension[:-1]}&{code}.png',
                                   quality=self.quality_val)
 
-                self.append_to_log(start, time.time(), as_png, self.log)
+                self.append_processed_result_to_log(start, time.time(), as_png, self.log)
                 
             self.open_save_destination()
                 
