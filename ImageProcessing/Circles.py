@@ -18,12 +18,23 @@ class Circles(ImageHandler):
         """
         try:
             image_to_save.save(f'img/Processed/Circles/resized_{file_name_with_extension}', quality=self.quality_val)
-            if os.name == 'nt':
-                abs_path = os.path.realpath(circle_dir_on_process)
-                os.startfile(abs_path)
+            # Moved to a new function so that opening windows explorer happens once at the end of saving instead of per image
+            # if os.name == 'nt':
+            #     abs_path = os.path.realpath(circle_dir_on_process)
+            #     os.startfile(abs_path)
         except Exception as e:
-            print('exception on save_image')
+            #print('exception on save_image')
+            self.append_ad_hoc_comment_to_log(f'Exception on save_image for {file_name_with_extension}',self.log)
         return
+        
+    def open_save_destination(self) -> None:
+        if os.name == 'nt':
+            abs_path = os.path.realpath(circle_dir_on_process)
+            try:
+                os.startfile(abs_path)
+            except Exception as e:
+                print("something wrong with opening explorer on open save destination")  
+        return  
 
     def _standardise_size(self, cropped_image):
         """Resize the given image to the configured standard size
@@ -128,8 +139,10 @@ class Circles(ImageHandler):
                 self.archive_image(as_png)
 
             # Write to log
-            end = time.time()
             self.append_to_log(start, time.time(), as_png, self.log)
+            
+            # Finally open where the picture is in Windows explorer
+            self.open_save_destination()
 
         except Exception as e:
             with open(self.log, 'a') as log:

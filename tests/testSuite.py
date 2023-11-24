@@ -1,4 +1,4 @@
-import ImageProcessor as ip 
+import ImageProcessing.ImageProcessor as ip 
 
 base_class = ip.ImageProcessor()
 

@@ -2,7 +2,8 @@ from multiprocessing import Pool
 from datetime import datetime
 import os
 from settings.initDirs import init_all
-from settings.staticDicts import valid_formats_cfg, image_quality_cfg, standard_img_size_cfg, log_location
+from settings.staticDicts import valid_formats_cfg, image_quality_cfg, standard_img_size_cfg, log_location, circle_dir_on_process, rectangle_dir_on_process, sticker_dir_on_process
+import Circles, Rectangles, CircleStickers
 
 class ImageHandler:
     def __init__(self):
@@ -18,6 +19,24 @@ class ImageHandler:
         self.img_dir = os.listdir('./img')
         self.log = log_location
         # self.max_cores = multiprocessing.cpu_count()
+        
+    def open_save_destination(self) -> None:
+        #if os.name == 'nt':
+        
+        abs_path = ''
+        
+        if isinstance(self, Circles):
+            abs_path = os.path.realpath(circle_dir_on_process)
+        elif isinstance(self, Rectangles):
+            abs_path = os.path.realpath(rectangle_dir_on_process)
+        elif isinstance(self, CircleStickers):
+            abs_path = os.path.realpath(sticker_dir_on_process)
+        
+        try:
+            os.startfile(abs_path)
+        except Exception as e:
+            print("something wrong with opening explorer on open save destination")  
+        return        
 
     def fetch_imgs(self):
         """
@@ -44,6 +63,11 @@ class ImageHandler:
             file (Image): Each image in the img generator
         """
         print("Requires override")
+        return
+    
+    def append_ad_hoc_comment_to_log(self, comment, log_file) -> None:
+        with open(f'{log_file}', 'a') as log:
+            log.write(comment)
         return
 
     def append_to_log(self, start_time: float, end_time: float, img_file, log_file: str):

@@ -19,12 +19,22 @@ class CircleStickers(ImageHandler):
         """
         try:
             image_to_save.save(f'img/Processed/Stickers/resized_{file_name_with_extension}', quality=self.quality_val)
-            if os.name == 'nt':
-                abs_path = os.path.realpath(sticker_dir_on_process)
-                os.startfile(abs_path)
+            # Moved to new func
+            # if os.name == 'nt':
+            #     abs_path = os.path.realpath(sticker_dir_on_process)
+            #     os.startfile(abs_path)
         except Exception as e:
             print('exception on save_image')
         return
+    
+    def open_save_destination(self) -> None:
+        if os.name == 'nt':
+            abs_path = os.path.realpath(sticker_dir_on_process)
+            try:
+                os.startfile(abs_path)
+            except Exception as e:
+                print("something wrong with opening explorer on open save destination")  
+        return  
 
     # override super.work_handler
     def work_handler(self, file):
@@ -93,9 +103,13 @@ class CircleStickers(ImageHandler):
                         canvas = self.colour_sub(canvas, colours['Black'])  # default to black if not specified
 
             self._save_image(canvas, as_png)
-            if os.name == 'nt':
-                abs_path = os.path.realpath(circle_dir_on_process)
-                os.startfile(abs_path)
+            
+            # moved to new func
+            # if os.name == 'nt':
+            #     abs_path = os.path.realpath(circle_dir_on_process)
+            #     os.startfile(abs_path)
+            
+            self.open_save_destination()
 
             self.archive_image(as_png)
             self.append_to_log(start, time.time(), as_png, self.log)
