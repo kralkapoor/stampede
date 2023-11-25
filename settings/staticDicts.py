@@ -19,7 +19,7 @@ rect_paths = {
     'PP' : '7 Dark Violet',
 }
 
-valid_formats_cfg = ('jpg', 'JPG', 'PNG', 'png')
+valid_formats_cfg = ('jpg', 'JPG', 'PNG', 'png', 'jpeg', 'JPEG')
 image_quality_cfg = 100
 standard_img_size_cfg = None #(200,200)
 log_location = 'settings/log.txt'

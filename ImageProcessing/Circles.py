@@ -65,8 +65,10 @@ class Circles(ImageHandler):
     def rename_file(self, file, new_name):
         try:
             os.rename(f'img/{file}', f'img/{new_name}')
+            return True
         except FileExistsError:
             self.append_ad_hoc_comment_to_log(f'{self.now.strftime("%d/%m/%Y, %H:%M:%S")}: "{new_name}" ERROR! FILE ALREADY EXISTS\n')
+            return False
 
     # Override super.work_handler
     def work_handler(self, file):
@@ -76,7 +78,9 @@ class Circles(ImageHandler):
         as_png = f'{no_extension}png'
         
         # rename the file and change extension to png so that we can apply transparent masks
-        self.rename_file(file, as_png)
+        rename_success = self.rename_file(file, as_png)
+        if not rename_success:
+            return
 
         image = Image.open(f'img/{as_png}')
 

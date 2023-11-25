@@ -33,7 +33,7 @@ class ImageHandler:
         Performs the work for processing. Applies the work_handler method to each file in the images generator
         """
         imgs = self.fetch_imgs()
-        p = Pool()  # default processes = cpu_count()
+        p = Pool()  # default processes = cpu_count() (i.e. 16 for me)
         p.map(self.work_handler, imgs)
 
     def work_handler(self, file):

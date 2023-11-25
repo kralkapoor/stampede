@@ -2,7 +2,7 @@ from ImageProcessing.ImageProcessor import ImageHandler
 import time
 import os
 from PIL import Image, ImageDraw
-from settings.staticDicts import colours, sticker_dir_on_process
+from settings.staticDicts import sticker_dir_on_process
 
 # new class for stickers
 class CircleStickers(ImageHandler):
@@ -37,79 +37,68 @@ class CircleStickers(ImageHandler):
                 print("something wrong with opening explorer on open save destination")  
         return  
     
+    def rename_file(self, file, new_name):
+        try:
+            os.rename(f'img/{file}', f'img/{new_name}')
+            return True
+        except FileExistsError:
+            self.append_ad_hoc_comment_to_log(f'{self.now.strftime("%d/%m/%Y, %H:%M:%S")}: "{new_name}" ERROR! FILE ALREADY EXISTS\n')
+            return False
+    
     # override super.work_handler
     def work_handler(self, file):
         # Convert valid formats to png to allow RGBA
         start = time.time()
         no_extension = file[:file.index('.') + 1]
         as_png = f'{no_extension}png'
-
-        try:
-            os.rename(f'img/{file}', f'img/{as_png}')
-        except FileExistsError:
-            with open('log.txt', 'a') as log:
-                log.write(
-                    f'{self.now.strftime("%d/%m/%Y, %H:%M:%S")}: "{as_png}" ERROR! FILE ALREADY EXISTS\n')
+        
+        rename_success = self.rename_file(file, as_png)
+        if not rename_success:
             return
 
         image = Image.open(f'img/{as_png}')
 
         try:
-            # set sizes and calculate max dimensions for canvas
-            curr_width, curr_height = image.size
-
-            # Calculate the min and max of width and height. 
-            # The max of the two minus min can be used as a center square
-            dimension_min = min(curr_width, curr_height)
-            dimension_max = max(curr_width, curr_height)
-            dimension_range = dimension_max - dimension_min
-
-            curr_canvas_size = (dimension_min, dimension_min)
-
-            # instantiate canvas and paste in image and a border circle
-            canvas = Image.new('RGBA', curr_canvas_size, (255, 255, 255, 255))
-            ImageDraw.Draw(canvas)
-
-            # paste image and center in the square canvas bounds
-            canvas.paste(image, (round(-dimension_range / 2), 0))
-
-            # create transparent mask for the cropped image
-            # width and height should be equal
-            mask = Image.new('L', canvas.size)
-            mask_draw = ImageDraw.Draw(mask)
-            mask_draw.ellipse((0, 0, dimension_min, dimension_min), fill=255)
-
-            # add transparent background to mask
-            canvas.putalpha(mask)
-            # check for colour processing and sub if is_coloured is true
-            is_coloured = False
-            try:
-                is_coloured = no_extension.count('&') == 1
-            except ValueError:
-                print(f'{file} in B&W format')
-
-            if is_coloured:
-                match no_extension[no_extension.index('&'):-1]:
-                    case '&R':
-                        canvas = self.colour_sub(canvas, colours['R'])  # red
-                    case '&G':
-                        canvas = self.colour_sub(canvas, colours['G'])  # medium sea green
-                    case '&B':
-                        canvas = self.colour_sub(canvas, colours['B'])  # cornflour blue
-                    case '&P':
-                        canvas = self.colour_sub(canvas, colours['P'])  # hot pink
-                    case '&PP':
-                        canvas = self.colour_sub(canvas, colours['PP'])  # dark violet
-                    case _:
-                        canvas = self.colour_sub(canvas, colours['Black'])  # default to black if not specified
-
-            self._save_image(canvas, as_png)
-            self.archive_image(as_png)
-            
-            self.append_processed_result_to_log(start, time.time(), as_png, self.log)
-
+            self.resize(image, as_png)
+            self.append_processed_result_to_log(start, time.time(), as_png, self.log)    
         except Exception as e:
-            with open('log.txt', 'a') as log:
-                log.write(
-                    f'{self.now.strftime("%d/%m/%Y %H:%M")}: UNEXPECTED ERROR PROCESSING {as_png}\n')
-                log.write(f'    Reason: {e}\n')
+            self.append_ad_hoc_comment_to_log( f'{self.now.strftime("%d/%m/%Y %H:%M")}: UNEXPECTED ERROR PROCESSING {as_png}\n',self.log)
+            self.append_ad_hoc_comment_to_log( f'    Reason: {e}\n',self.log)
+                
+    def resize(self, image, filename):
+        # set sizes and calculate max dimensions for canvas
+        curr_width, curr_height = image.size
+
+        # the proportions of stickers are not necessarily square
+        # take the max dimension and create a canvas so that it fits everything
+        dimension_max = max(curr_width, curr_height)
+        dimension_min = min(curr_width, curr_height)
+        dimension_range = dimension_max - dimension_min
+        
+        curr_canvas_size = (dimension_max, dimension_max)
+
+        # instantiate canvas and paste in image and a border circle
+        canvas = Image.new('RGBA', curr_canvas_size, (255, 255, 255, 255))
+        ImageDraw.Draw(canvas)
+
+
+        print(curr_width, curr_height)
+        
+        if curr_width > curr_height:
+            difference = curr_width - curr_height
+            canvas.paste(image, (0,round(difference/2)))
+        elif curr_height > curr_width:
+            difference = curr_height - curr_width
+            canvas.paste(image, (round(difference/2),0))
+        
+
+        # create transparent mask for the cropped image
+        mask = Image.new('L', canvas.size)
+        mask_draw = ImageDraw.Draw(mask)
+        mask_draw.ellipse((0, 0, dimension_max, dimension_max), fill=255)
+
+        # # add transparent background to mask
+        canvas.putalpha(mask)
+
+        self._save_image(canvas, filename)
+        self.archive_image(filename)
