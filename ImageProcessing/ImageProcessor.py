@@ -3,7 +3,6 @@ from datetime import datetime
 import os
 from settings.initDirs import init_all
 from settings.staticDicts import valid_formats_cfg, image_quality_cfg, standard_img_size_cfg, log_location
-
 class ImageHandler:
     def __init__(self):
         init_all()  # init prerequisite directories that are gitignored
@@ -17,7 +16,7 @@ class ImageHandler:
         self.now = datetime.now()
         self.img_dir = os.listdir('./img')
         self.log = log_location
-        # self.max_cores = multiprocessing.cpu_count()
+        # self.max_cores = multiprocessing.cpu_count() 
 
     def fetch_imgs(self):
         """
@@ -34,7 +33,7 @@ class ImageHandler:
         Performs the work for processing. Applies the work_handler method to each file in the images generator
         """
         imgs = self.fetch_imgs()
-        p = Pool()  # default processes = cpu_count()
+        p = Pool()  # default processes = cpu_count() (i.e. 16 for me)
         p.map(self.work_handler, imgs)
 
     def work_handler(self, file):
@@ -45,8 +44,13 @@ class ImageHandler:
         """
         print("Requires override")
         return
+    
+    def append_ad_hoc_comment_to_log(self, comment, log_file) -> None:
+        with open(f'{log_file}', 'a') as log:
+            log.write(comment)
+        return
 
-    def append_to_log(self, start_time: float, end_time: float, img_file, log_file: str):
+    def append_processed_result_to_log(self, start_time: float, end_time: float, img_file, log_file: str):
         """Append a message to the log saying whether the img was successfully processed or not
 
         Args:
