@@ -23,12 +23,7 @@ class Circles(ImageHandler):
         """
         try:
             image_to_save.save(f'img/Processed/Circles/resized_{file_name_with_extension}', quality=self.quality_val)
-            # Moved to a new function so that opening windows explorer happens once at the end of saving instead of per image
-            # if os.name == 'nt':
-            #     abs_path = os.path.realpath(circle_dir_on_process)
-            #     os.startfile(abs_path)
         except Exception as e:
-            #print('exception on save_image')
             self.append_ad_hoc_comment_to_log(f'Exception on save_image for {file_name_with_extension}',self.log)
         return
         
@@ -90,8 +85,10 @@ class Circles(ImageHandler):
             
             if isColoured:
                 colour_extension = self.determine_colour_extension(no_extension)
-                recoloured_image = self.recolour(cropped, no_extension, colour_extension)
-                self._save_image(recoloured_image, f'{no_extension}png')
+                # Convert the current picture into one of the standard colours
+                final_image = self.recolour(cropped, no_extension, colour_extension)
+                if final_image:
+                    self._save_image(final_image, as_png)
             else:
                 darkened_image = self.recolour_darken(cropped)
                 self._save_image(darkened_image, f'{no_extension}png')
@@ -138,7 +135,7 @@ class Circles(ImageHandler):
         return is_coloured 
     
     def recolour_darken(self, cropped):
-        cropped = self.colour_sub(cropped, colours['Black'])  # black (darken the grey pixels)
+        cropped = self.colour_sub(cropped, colours['Black'])  # black (darken the grey pixels so contrast is better when printed on paper)
         return cropped
     
     def determine_colour_extension(self, filename_without_extension):
@@ -161,7 +158,9 @@ class Circles(ImageHandler):
                 cropped = self.colour_sub(cropped, colours['PP'])  # dark violet
             case '&E':  # make a copy for all colours
                 self.recolour_create_each_colour(cropped,filename_without_extension)
-            
+                # exit out so we don't save the &E original picture in work handler 
+                return
+                
         # STANDARDISE THE SIZES OF STAMPS
         # post-recolour, we want to bring the images down to consistent dimensions
         cropped = self._standardise_size(cropped)
@@ -170,9 +169,14 @@ class Circles(ImageHandler):
     def recolour_create_each_colour(self, cropped, filename_without_extension):
          # Need to iterate over all key:value pairs in std colours
          # we want to have one cropped image and recolour it for each standard colour
-         # saving multiple copies
+         # saving multiple copies 
+         
         for code, colour in colours.items():
             colour_cropped = self.colour_sub(cropped.copy(), colour)
             colour_cropped = self._standardise_size(colour_cropped)
             colour_as_png = f'{filename_without_extension}{code}.png'
             self._save_image(colour_cropped, colour_as_png)
+            
+            
+if __name__ == '__main__':
+    pass
