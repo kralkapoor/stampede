@@ -45,60 +45,78 @@ class CircleStickers(ImageHandler):
             self.append_ad_hoc_comment_to_log(f'{self.now.strftime("%d/%m/%Y, %H:%M:%S")}: "{new_name}" ERROR! FILE ALREADY EXISTS\n')
             return False
     
+    def convert_image_to_RGB_with_specific_background_colour(self, image, colour_string : str):
+        converted_image = Image.new("RGB", image.size, colour_string)
+        if image.mode == "RGBA":
+            try:
+                converted_image.paste(image, (0,0), image)
+            except:
+                self.append_ad_hoc_comment_to_log(f'bad transparency mask on {image}. bypassing...\n',self.log)
+                print(f'WARNING: bad transparency mask on {image}. bypassing...')
+                converted_image.paste(image, (0,0))
+        else:
+            converted_image.paste(image,(0,0))
+        return converted_image
+    
     # override super.work_handler
     def work_handler(self, file):
         # Convert valid formats to png to allow RGBA
         start = time.time()
         no_extension = file[:file.index('.') + 1]
-        as_png = f'{no_extension}png'
+        path_as_png = f'{no_extension}png'
         
-        rename_success = self.rename_file(file, as_png)
+        rename_success = self.rename_file(file, path_as_png)
         if not rename_success:
             return
-
-        image = Image.open(f'img/{as_png}')
-
+        
+        # prep the image with a white background (sticker background must be white)
+        # this accommodates when a png is provided which already has a transparent bg
+        image = Image.open(f'img/{path_as_png}')
+        image = self.convert_image_to_RGB_with_specific_background_colour(image, "white")
+        
         try:
-            self.resize(image, as_png)
-            self.append_processed_result_to_log(start, time.time(), as_png, self.log)    
+            sticker_img = self.resize(image)
+            self.append_processed_result_to_log(start, time.time(), path_as_png, self.log)
+            self._save_image(sticker_img, path_as_png)
+            self.archive_image(path_as_png)    
         except Exception as e:
-            self.append_ad_hoc_comment_to_log( f'{self.now.strftime("%d/%m/%Y %H:%M")}: UNEXPECTED ERROR PROCESSING {as_png}\n',self.log)
+            self.append_ad_hoc_comment_to_log( f'{self.now.strftime("%d/%m/%Y %H:%M")}: UNEXPECTED ERROR PROCESSING {path_as_png}\n',self.log)
             self.append_ad_hoc_comment_to_log( f'    Reason: {e}\n',self.log)
-                
-    def resize(self, image, filename):
+            
+    def paste_image_to_centre_of_canvas(self, desired_size, image_to_paste, curr_width, curr_height):
+        canvas = Image.new('RGBA', desired_size, (255, 255, 255, 255))
+        ImageDraw.Draw(canvas)
+
+        if curr_width > curr_height:
+            difference = curr_width - curr_height
+            canvas.paste(image_to_paste, (0,round(difference/2)))
+        elif curr_height > curr_width:
+            difference = curr_height - curr_width
+            canvas.paste(image_to_paste, (round(difference/2),0))
+        else:
+            canvas.paste(image_to_paste,(0,0))
+            
+        return canvas
+    
+    def create_transparent_mask(self, canvas_size, img_dimension_max):
+        mask = Image.new('L', canvas_size)
+        mask_draw = ImageDraw.Draw(mask)
+        mask_draw.ellipse((0, 0, img_dimension_max, img_dimension_max), fill=255)
+        return mask
+                        
+    def resize(self, image):
         # set sizes and calculate max dimensions for canvas
         curr_width, curr_height = image.size
-
         # the proportions of stickers are not necessarily square
         # take the max dimension and create a canvas so that it fits everything
         dimension_max = max(curr_width, curr_height)
-        dimension_min = min(curr_width, curr_height)
-        dimension_range = dimension_max - dimension_min
+        canvas_size = (dimension_max, dimension_max)
         
-        curr_canvas_size = (dimension_max, dimension_max)
-
         # instantiate canvas and paste in image and a border circle
-        canvas = Image.new('RGBA', curr_canvas_size, (255, 255, 255, 255))
-        ImageDraw.Draw(canvas)
-
-
-        print(curr_width, curr_height)
-        
-        if curr_width > curr_height:
-            difference = curr_width - curr_height
-            canvas.paste(image, (0,round(difference/2)))
-        elif curr_height > curr_width:
-            difference = curr_height - curr_width
-            canvas.paste(image, (round(difference/2),0))
-        
-
+        canvas = self.paste_image_to_centre_of_canvas(canvas_size, image, curr_width, curr_height)
         # create transparent mask for the cropped image
-        mask = Image.new('L', canvas.size)
-        mask_draw = ImageDraw.Draw(mask)
-        mask_draw.ellipse((0, 0, dimension_max, dimension_max), fill=255)
-
-        # # add transparent background to mask
+        mask = self.create_transparent_mask(canvas.size, dimension_max)
+        # add transparent background to mask
         canvas.putalpha(mask)
 
-        self._save_image(canvas, filename)
-        self.archive_image(filename)
+        return canvas
