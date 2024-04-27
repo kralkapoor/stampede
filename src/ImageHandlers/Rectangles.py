@@ -1,10 +1,10 @@
-from ImageProcessing.ImageProcessor import ImageHandler
+from src.ImageHandlerBase import ImageHandlerBase
 import time
 import os
 from PIL import Image, ImageDraw
 from settings.staticDicts import colours, rect_paths, rectangle_dir_on_process
 
-class Rectangles(ImageHandler):
+class Rectangles(ImageHandlerBase):
 
     def __init__(self):
         super().__init__()
@@ -69,10 +69,6 @@ class Rectangles(ImageHandler):
                         canvas = self.colour_sub(canvas, colours['Black'])  # default to black if not specified
 
                 canvas.save(f'img/Processed/Rectangles/{path}/{as_png}', quality=100)
-                # Moved to new func
-                # if os.name == 'nt':
-                #     abs_path = os.path.realpath(rectangle_dir_on_process)
-                #     os.startfile(abs_path)
 
                 # Write to log
                 self.append_processed_result_to_log(start, time.time(), as_png, self.log)
@@ -89,7 +85,6 @@ class Rectangles(ImageHandler):
             self.open_save_destination()
                 
             # Archive 
-            # os.replace(f'img/{as_png}',f'img/zArchive/{as_png}')
             self.archive_image(as_png)
 
         except Exception as e:

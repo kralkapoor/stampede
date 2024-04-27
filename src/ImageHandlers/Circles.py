@@ -1,10 +1,15 @@
-from ImageProcessing.ImageProcessor import ImageHandler
+from src.ImageHandlerBase import ImageHandlerBase
 import time
 import os
 from PIL import Image, ImageDraw
 from settings.staticDicts import colours, circle_dir_on_process
 
-class Circles(ImageHandler):
+class Circles(ImageHandlerBase):
+    """Extends ImageHandler to specifically process circle shaped images used in the small, round stamp handles.
+
+    Args:
+        ImageHandlerBase (class): Base class from which to inherit save, logging, and multiprocessing functions.
+    """
 
     def __init__(self):
         super().__init__()
@@ -159,7 +164,7 @@ class Circles(ImageHandler):
             case '&E':  # make a copy for all colours
                 self.recolour_create_each_colour(cropped,filename_without_extension)
                 # exit out so we don't save the &E original picture in work handler 
-                return
+                return None
                 
         # STANDARDISE THE SIZES OF STAMPS
         # post-recolour, we want to bring the images down to consistent dimensions
@@ -176,7 +181,6 @@ class Circles(ImageHandler):
             colour_cropped = self._standardise_size(colour_cropped)
             colour_as_png = f'{filename_without_extension}{code}.png'
             self._save_image(colour_cropped, colour_as_png)
-            
             
 if __name__ == '__main__':
     pass

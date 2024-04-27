@@ -1,13 +1,13 @@
 # Project specific
-config/log.txt
+*/log.txt
 img/
 venv/
 env/
 virtualenv/
+
 # vscode
 .vscode/
 .idea/
-settings/log.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

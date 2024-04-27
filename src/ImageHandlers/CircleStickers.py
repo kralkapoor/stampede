@@ -1,11 +1,11 @@
-from ImageProcessing.ImageProcessor import ImageHandler
+from src.ImageHandlerBase import ImageHandlerBase
 import time
 import os
 from PIL import Image, ImageDraw
 from settings.staticDicts import sticker_dir_on_process
 
 # new class for stickers
-class CircleStickers(ImageHandler):
+class CircleStickers(ImageHandlerBase):
 
     def __init__(self):
         super().__init__()

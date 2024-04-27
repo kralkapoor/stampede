@@ -1,10 +1,8 @@
 import tkinter as tk
-# import config.staticDicts
-# from tkinter import PhotoImage
 from PIL import ImageTk, Image
-from ImageProcessing.Circles import Circles
-from ImageProcessing.Rectangles import Rectangles
-from ImageProcessing.CircleStickers import CircleStickers
+from src.ImageHandlers.Circles import Circles
+from src.ImageHandlers.Rectangles import Rectangles
+from src.ImageHandlers.CircleStickers import CircleStickers
 
 class GUI:
     def __init__(self, master):
@@ -18,7 +16,7 @@ class GUI:
         master.configure(bg='white')
 
         # Load logo and button images
-        self.logo_image = ImageTk.PhotoImage(Image.open("settings/assets/logo.png"))
+        self.logo_image = ImageTk.PhotoImage(Image.open("assets/logo.png"))
 
         # Logo
         self.logo_label = tk.Label(master, image=self.logo_image, bg='white')

@@ -3,7 +3,7 @@ from datetime import datetime
 import os
 from settings.initDirs import init_all
 from settings.staticDicts import valid_formats_cfg, image_quality_cfg, standard_img_size_cfg, log_location
-class ImageHandler:
+class ImageHandlerBase:
     def __init__(self):
         init_all()  # init prerequisite directories that are gitignored
         self.valid_formats = valid_formats_cfg
