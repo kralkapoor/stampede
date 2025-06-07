@@ -1,10 +1,10 @@
-from src.ImageHandlerBase import ImageHandlerBase
+from ..base_image_handler import BaseImageHandler
 import time
 import os
 from PIL import Image, ImageDraw
-from settings.staticDicts import colours, rect_paths, rectangle_dir_on_process
+from settings.static_dicts import colours, rect_paths, rectangle_dir_on_process
 
-class Rectangles(ImageHandlerBase):
+class RectangleHandler(BaseImageHandler):
 
     def __init__(self):
         super().__init__()

@@ -1,9 +1,19 @@
 import os
-from settings.staticDicts import rect_paths
+from settings.static_dicts import rect_paths
+
+DIRS = (
+            'img/',
+            'img/Processed',
+            'img/zArchive',
+            'img/Processed/Rectangles',
+            'img/Processed/Circles',
+            'img/Processed/Stickers',
+            'img/Processed/Avatars',
+            'img/Processed/Avatars/Exemplars'
+        )
 
 def init_base_dirs():
-    dirs = (f'img/',f'img/Processed',f'img/zArchive',f'img/Processed/Rectangles',f'img/Processed/Circles',f'img/Processed/Stickers')
-    for dir in dirs:
+    for dir in DIRS:
         try:
             os.mkdir(dir)
             print(f'Created dir for {dir}')

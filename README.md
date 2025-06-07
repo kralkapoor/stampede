@@ -19,3 +19,11 @@
 - **Pillow**: The Python imaging library is the heavy lifter for this project, which allows image manipulation for the given files.
 - **OS**: The OS library is extensively used for accessing the computer's fs and iterating over the img directory
 - **Mulitprocessing**: Not required but used to improve performance when processing multiple images concurrently. It is currently set to use the max available system cores.
+
+## Environment variables
+- Requires an OpenAI API key and, optionally, configuration for the project ID and organisation ID. Use the following as a template.
+```
+OPENAI_API_KEY={key}
+OPENAI_PROJECT_ID={proj id}
+OPENAI_ORG_ID={org id}
+```

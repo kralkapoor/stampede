@@ -1,10 +1,10 @@
-from src.ImageHandlerBase import ImageHandlerBase
+from ..base_image_handler import BaseImageHandler
 import time
 import os
 from PIL import Image, ImageDraw
-from settings.staticDicts import colours, circle_dir_on_process
+from settings.static_dicts import colours, circle_dir_on_process
 
-class Circles(ImageHandlerBase):
+class CircleHandler(BaseImageHandler):
     """Extends ImageHandler to specifically process circle shaped images used in the small, round stamp handles.
 
     Args:
