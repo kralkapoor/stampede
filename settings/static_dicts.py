@@ -2,7 +2,7 @@
 
 colours = {
     'R' : (255,0,0,255),        # Red
-    'G' : (119,221,119),        # Pastel green
+    'G' : (60, 179, 113, 255),  # Medium Sea Green
     'B' : (100, 149, 237, 255), # Cornflour Blue
     'P' : (255, 105, 180, 255), # Hot Pink
     'PP' : (148, 0, 211, 255),  # Dark Violet
