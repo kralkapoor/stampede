@@ -1,8 +1,11 @@
 from multiprocessing import Pool
 from datetime import datetime
 import os
-from settings.initDirs import init_all
-from settings.staticDicts import (
+import tkinter as tk
+from tkinter import messagebox
+import threading
+from settings.init_dirs import init_all
+from settings.static_dicts import (
     valid_formats_cfg,
     image_quality_cfg,
     standard_img_size_cfg,
@@ -10,7 +13,7 @@ from settings.staticDicts import (
 )
 
 
-class ImageHandlerBase:
+class BaseImageHandler:
     def __init__(self):
         init_all()  # init prerequisite directories that are gitignored
         self.valid_formats = valid_formats_cfg
@@ -53,14 +56,12 @@ class ImageHandlerBase:
         print("Requires override")
         return
 
-    def append_ad_hoc_comment_to_log(self, comment, log_file) -> None:
+    def append_ad_hoc_comment_to_log(self, comment, log_file=log_location) -> None:
         with open(f"{log_file}", "a") as log:
             log.write(comment)
         return
 
-    def append_processed_result_to_log(
-        self, start_time: float, end_time: float, img_file, log_file: str
-    ):
+    def append_processed_result_to_log(self, start_time: float, end_time: float, img_file, log_file: str):
         """Append a message to the log saying whether the img was successfully processed or not
 
         Args:
