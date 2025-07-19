@@ -1,4 +1,4 @@
-BASE_PROMPT : str = """
+BASE_PROMPT: str = """
 Convert the provided 3D avatar into a high-contrast, 100 percent black-and-white line art suitable for a rubber stamp.  
 You have been supplied with some exemplars of expected outputs. These are 2D, monochromatic images.
 • Style: Clean 2D vector line drawing with thick, uniform black outlines (no grayscale or shading).  

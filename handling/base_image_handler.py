@@ -1,6 +1,9 @@
 from multiprocessing import Pool
 from datetime import datetime
 import os
+import tkinter as tk
+from tkinter import messagebox
+import threading
 from settings.init_dirs import init_all
 from settings.static_dicts import (
     valid_formats_cfg,
@@ -57,11 +60,8 @@ class BaseImageHandler:
         with open(f"{log_file}", "a") as log:
             log.write(comment)
         return
-        
 
-    def append_processed_result_to_log(
-        self, start_time: float, end_time: float, img_file, log_file: str
-    ):
+    def append_processed_result_to_log(self, start_time: float, end_time: float, img_file, log_file: str):
         """Append a message to the log saying whether the img was successfully processed or not
 
         Args:
