@@ -3,9 +3,10 @@ import os
 from settings.avatar_prompt import BASE_PROMPT
 from uuid import uuid4
 import tkinter as tk
+from tkinter import messagebox
 from PIL import Image, ImageTk
 from .base_image_handler import BaseImageHandler
-from settings.static_dicts import avatar_dir_on_process, avatar_exemplars_dir, valid_formats_cfg
+from settings.static_dicts import avatar_dir_on_process
 from handling.util.util import create_openai_client
 from handling.util.view_util import show_processing_dialog
 
