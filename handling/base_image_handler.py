@@ -35,7 +35,7 @@ class BaseImageHandler:
         Returns:
             Generator: of all the images for processing
         """
-        files = (file for file in self.img_dir if file.endswith(self.valid_formats))
+        files = (file for file in self.img_dir if self._is_valid_file_type(file))
         return files
 
     def pool_handler(self):
@@ -103,7 +103,15 @@ class BaseImageHandler:
         Args:
             image_to_archive (Image): Image to archive
         """
-        os.replace(f"img/{image_to_archive}", f"img/zArchive/{image_to_archive}")
+        try:
+            os.replace(f"img/{image_to_archive}", f"img/zArchive/{image_to_archive}")
+        except OSError:
+            self.append_ad_hoc_comment_to_log(f"Unable to archive {image_to_archive}: {OSError}")
+
+    def _is_valid_file_type(self, file_name: str):
+        if not file_name:
+            return False
+        return file_name.lower().endswith(valid_formats_cfg)
 
 
 if __name__ == "__main__":

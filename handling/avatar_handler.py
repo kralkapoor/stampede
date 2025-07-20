@@ -70,11 +70,7 @@ class AvatarHandler(BaseImageHandler):
             exemplar_images = [
                 open(f"{avatar_exemplars_dir}/{file}", "rb") for file in os.listdir(avatar_exemplars_dir)
             ]
-            input_images = [
-                open(f"img/{file}", "rb")
-                for file in os.listdir("img")
-                if file.endswith("png") or file.endswith("jpg") or file.endswith("jpeg")
-            ]
+            input_images = [open(f"img/{file}", "rb") for file in os.listdir("img") if self._is_valid_file_type(file)]
             for img in input_images:
                 exemplar_images.append(img)
 
@@ -99,7 +95,7 @@ class AvatarHandler(BaseImageHandler):
 
             # Archive all processed input images
             for file in os.listdir("img"):
-                if file.lower().endswith(("png", "jpg", "jpeg")):
+                if self._is_valid_file_type(file):
                     self.archive_image(file)
                     print(f"Archived input image: {file}")
 

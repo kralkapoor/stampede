@@ -43,7 +43,7 @@ class AvatarEditHandler(BaseImageHandler):
 
     def _validate_single_image(self) -> bool:
         """Check that exactly one image file exists in img directory"""
-        image_files = [file for file in os.listdir("img") if file.lower().endswith(valid_formats_cfg)]
+        image_files = [file for file in os.listdir("img") if self._is_valid_file_type(file)]
 
         if len(image_files) == 0:
             messagebox.showerror(
