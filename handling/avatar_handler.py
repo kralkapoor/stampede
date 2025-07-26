@@ -1,24 +1,27 @@
+"""Avatar generation handler using OpenAI's image generation API."""
+
 import base64
 import os
 import tkinter as tk
 from datetime import datetime
 
-from handling.base_image_handler import BaseImageHandler
-from handling.util.util import create_openai_client
+from handling.avatar_base_handler import AvatarBaseHandler
 from handling.util.view_util import show_processing_dialog
 from settings.avatar_prompt import BASE_PROMPT
 from settings.static_dicts import EXAMPLE_DIR_AVATAR, IMAGE_DIR, PROCESSED_DIR_AVATAR
 
 
-class AvatarHandler(BaseImageHandler):
+class AvatarHandler(AvatarBaseHandler):
+    """Handles avatar image generation using OpenAI's API."""
 
     def __init__(self, master: tk.Tk):
-        super().__init__()  # Initialize BaseImageHandler
+        """Initialize avatar handler."""
+        super().__init__()
         self.master_window = master
         self.prompt = BASE_PROMPT
-        self.client = create_openai_client()
 
     def process_avatar(self):
+        """Process avatar generation requests."""
         # Get user prompt with modifications, if any
         user_prompt, window = self._get_prompt()
         window.destroy()
@@ -94,26 +97,20 @@ class AvatarHandler(BaseImageHandler):
 
     def _execute_model_request(self, user_prompt: str, images: list) -> list:
         try:
-            result = self.client.images.edit(
-                model="gpt-image-1",
-                image=images,
-                prompt=user_prompt,
-                background="transparent",
-                n=1,  # TODO support multiple avatars at a time
-                quality="high",
-                size="auto",
-            )
+            result_data = super()._execute_edit_request(user_prompt, images)
+            if not result_data:
+                return []
 
-            self._save_avatar(result)
-            return result
+            self._save_avatar_data(result_data)
+            return result_data
 
         except Exception as e:
             self._append_ad_hoc_comment_to_log(f"Error in avatar generation: {str(e)}")
             print(f"Error in avatar generation: {str(e)}")
             return []
 
-    def _save_avatar(self, model_response):
-        for returned_image in model_response.data:
+    def _save_avatar_data(self, result_data):
+        for returned_image in result_data:
             image_base64 = returned_image.b64_json
             image_bytes = base64.b64decode(image_base64)
             # Save the image to a file with timestamp prefix

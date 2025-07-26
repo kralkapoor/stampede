@@ -1,3 +1,6 @@
+"""Custom configuration error exception."""
+
+
 class ConfigurationError(Exception):
     """
     Raised when any manner of configuration sins happen

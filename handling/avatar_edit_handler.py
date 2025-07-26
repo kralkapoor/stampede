@@ -1,3 +1,5 @@
+"""Avatar editing handler using OpenAI's image editing API."""
+
 import base64
 import os
 import tkinter as tk
@@ -6,23 +8,24 @@ from tkinter import messagebox
 
 from PIL import Image, ImageTk
 
-from handling.base_image_handler import BaseImageHandler
-from handling.util.util import create_openai_client
+from handling.avatar_base_handler import AvatarBaseHandler
 from handling.util.view_util import show_processing_dialog
 from settings.avatar_prompt import BASE_PROMPT
 from settings.static_dicts import PROCESSED_DIR_AVATAR
 
 
-class AvatarEditHandler(BaseImageHandler):
+class AvatarEditHandler(AvatarBaseHandler):
+    """Handles avatar image editing using OpenAI's image editing capabilities."""
 
     def __init__(self, master: tk.Tk):
+        """Initialize avatar edit handler."""
         super().__init__()
         self.master_window = master
         self.prompt = BASE_PROMPT
-        self.client = create_openai_client()
         self.image_file = None
 
     def process_edit_avatar(self):
+        """Process avatar editing requests."""
         # Validate exactly one image exists
         if not self._validate_single_image():
             return
@@ -33,13 +36,20 @@ class AvatarEditHandler(BaseImageHandler):
         print(f"edit prompt = {user_prompt}")
         self._append_ad_hoc_comment_to_log(f"Avatar edit with prompt: {user_prompt}")
 
-        # Show processing feedback and execute in background
-        show_processing_dialog(
-            self.master_window,
-            "Processing...",
-            "Processing image...\nPlease wait...",
-            lambda: self._execute_edit_request(user_prompt),
-        )
+        with open(f"img/{self.image_file}", "rb") as image_data:
+
+            # Show processing feedback and execute in background
+            show_processing_dialog(
+                self.master_window,
+                "Processing...",
+                "Processing image...\nPlease wait...",
+                lambda: self._execute_edit_request(user_prompt, image_data),
+            )
+
+        # Archive the processed input image
+        image_name = self.image_file.split("/")[-1]
+        self._archive_image(image_name)
+        print(f"Archived input image: {image_name}")
 
         # Exit
         self._exit_program()
@@ -144,23 +154,14 @@ class AvatarEditHandler(BaseImageHandler):
 
         return text.get("1.0", tk.END), child_window
 
-    def _execute_edit_request(self, user_prompt: str) -> bool:
+    def _execute_edit_request(self, user_prompt: str, image_data) -> list:
         try:
-            # Open the single image file for editing
-            with open(f"img/{self.image_file}", "rb") as image_file:
-                # Add the image to edit to the exemplar images list
-                result = self.client.images.edit(
-                    model="gpt-image-1",
-                    image=image_file,
-                    prompt=user_prompt,
-                    background="transparent",
-                    n=1,
-                    quality="high",
-                    size="auto",
-                )
+            result_data = super()._execute_edit_request(user_prompt, image_data)
+            if not result_data:
+                return []
 
             # Save the edited image - expect b64_json response like avatar_handler
-            for returned_image in result.data:
+            for returned_image in result_data:
                 image_base64 = returned_image.b64_json
                 image_bytes = base64.b64decode(image_base64)
                 # Save the image to a file with timestamp prefix
@@ -170,16 +171,12 @@ class AvatarEditHandler(BaseImageHandler):
                     f.write(image_bytes)
                 print(f"Saved edited image: {output_filename}")
 
-            # Archive the processed input image
-            self._archive_image(self.image_file)
-            print(f"Archived input image: {self.image_file}")
-
-            return True
+            return result_data
 
         except Exception as e:
             self._append_ad_hoc_comment_to_log(f"Error in edit request: {str(e)}")
             print(f"Error in edit request: {str(e)}")
-            return False
+            return []
 
     def _exit_program(self):
         exit(0)

@@ -1,3 +1,5 @@
+"""Directory initialization utilities."""
+
 import os
 
 from settings.static_dicts import RECT_PATHS
@@ -15,6 +17,7 @@ DIRS = (
 
 
 def init_base_dirs():
+    """Initialize base processing directories."""
     for directory in DIRS:
         try:
             os.mkdir(directory)
@@ -24,7 +27,8 @@ def init_base_dirs():
 
 
 def init_rect_dirs():
-    rect_dirs = [f"img/Processed/Rectangles/{RECT_PATHS[key]}" for key in RECT_PATHS]
+    """Initialize rectangle-specific directories."""
+    rect_dirs = [f"img/Processed/Rectangles/{path}" for path in RECT_PATHS.values()]
     for directory in rect_dirs:
         try:
             os.mkdir(directory)
@@ -34,6 +38,7 @@ def init_rect_dirs():
 
 
 def init_all():
+    """Initialize all required directories."""
     init_base_dirs()
     init_rect_dirs()
 

@@ -1,3 +1,5 @@
+"""Circle handler for processing circular stamps with color themes."""
+
 import os
 import time
 
@@ -19,7 +21,7 @@ class CircleHandler(BaseImageHandler):
 
     def pool_handler(self):
         super().pool_handler()
-        self.open_save_destination()
+        self._open_save_destination(PROCESSED_DIR_CIRCLE)
 
     def _save_image(self, image_to_save, file_name_with_extension):
         """Saves the image for circle processing into a Circles subfolder
@@ -32,14 +34,6 @@ class CircleHandler(BaseImageHandler):
             image_to_save.save(f"img/Processed/Circles/resized_{file_name_with_extension}", quality=self.quality_val)
         except Exception:
             self._append_ad_hoc_comment_to_log(f"Exception on save_image for {file_name_with_extension}", self.log)
-
-    def open_save_destination(self) -> None:
-        if os.name == "nt":
-            abs_path = os.path.realpath(PROCESSED_DIR_CIRCLE)
-            try:
-                os.startfile(abs_path)  # pylint: disable=no-member
-            except Exception:
-                print("something wrong with opening explorer on open save destination")
 
     def _standardise_size(self, cropped_image):
         """Resize the given image to the configured standard size
@@ -62,16 +56,6 @@ class CircleHandler(BaseImageHandler):
             print("exception on standardise_size")
             return None
 
-    def rename_file(self, file, new_name):
-        try:
-            os.rename(f"img/{file}", f"img/{new_name}")
-            return True
-        except FileExistsError:
-            self._append_ad_hoc_comment_to_log(
-                f'{self.now.strftime("%d/%m/%Y, %H:%M:%S")}: "{new_name}" ERROR! FILE ALREADY EXISTS\n'
-            )
-            return False
-
     # Override super.work_handler
     def _work_handler(self, file):
         # Convert valid formats to png to allow RGBA
@@ -80,7 +64,7 @@ class CircleHandler(BaseImageHandler):
         as_png = f"{no_extension}png"
 
         # rename the file and change extension to png so that we can apply transparent masks
-        rename_success = self.rename_file(file, as_png)
+        rename_success = self._rename_file(file, as_png)
         if not rename_success:
             return
 
@@ -111,6 +95,7 @@ class CircleHandler(BaseImageHandler):
             self._append_ad_hoc_comment_to_log(f"    Reason: {e}\n")
 
     def resize(self, image):
+        """Resize image maintaining aspect ratio."""
         # set sizes and calculate max dimensions for canvas
         curr_width, curr_height = image.size
         max_dimension = max(curr_width + 100, curr_height + 100)
@@ -135,6 +120,7 @@ class CircleHandler(BaseImageHandler):
         return cropped
 
     def check_is_coloured(self, filename_without_extension):
+        """Check if filename contains color suffix."""
         is_coloured = filename_without_extension.count("&") == 1
 
         if not is_coloured:
@@ -145,16 +131,19 @@ class CircleHandler(BaseImageHandler):
         return is_coloured
 
     def recolour_darken(self, cropped):
+        """Apply darkening filter to image."""
         cropped = self._colour_sub(
             cropped, COLOURS["Black"]
         )  # black (darken the grey pixels so contrast is better when printed on paper)
         return cropped
 
     def determine_colour_extension(self, filename_without_extension):
+        """Determine color extension from filename."""
         colour_extension = filename_without_extension[filename_without_extension.index("&") : -1]
         return colour_extension
 
     def recolour(self, cropped, filename_without_extension, colour_extension):
+        """Apply color transformation to image."""
         # check for colour processing and sub if is_coloured is true
 
         match colour_extension:
@@ -179,6 +168,7 @@ class CircleHandler(BaseImageHandler):
         return cropped
 
     def recolour_create_each_colour(self, cropped, filename_without_extension):
+        """Create image variants in each available color."""
         # Need to iterate over all key:value pairs in std colours
         # we want to have one cropped image and recolour it for each standard colour
         # saving multiple copies

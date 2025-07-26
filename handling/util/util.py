@@ -1,3 +1,5 @@
+"""Utility functions for OpenAI client creation."""
+
 import os
 
 from dotenv import load_dotenv
@@ -7,6 +9,7 @@ from handling.exception.configuration_error import ConfigurationError
 
 
 def create_openai_client():
+    """Create and return OpenAI client with API key from environment."""
     load_dotenv()
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     if OPENAI_API_KEY is None:

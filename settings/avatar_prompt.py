@@ -1,3 +1,5 @@
+"""Avatar generation prompt template."""
+
 BASE_PROMPT: str = """
 Convert the uploaded 3D avatar into a clean, high-contrast black-and-white line drawing suitable for a rubber stamp.
 You have been supplied with some examples of expected outputs. These are 2D, simple avatars reminiscent of Bitmojis that can be successfully processed into ink stamps. You will ignore the text surrounding the avatar, as you will focus only on creating the bitmoji itself.

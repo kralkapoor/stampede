@@ -1,4 +1,4 @@
-# standard mappings here
+"""Static configuration dictionaries for colors, paths, and settings."""
 
 COLOURS = {
     "R": (255, 0, 0, 255),  # Red

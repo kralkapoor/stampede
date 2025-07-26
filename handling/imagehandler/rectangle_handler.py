@@ -1,3 +1,5 @@
+"""Rectangle image handler for processing rectangular stamps."""
+
 import os
 import time
 
@@ -8,6 +10,7 @@ from settings.static_dicts import COLOURS, PROCESSED_DIR_RECT, RECT_PATHS
 
 
 class RectangleHandler(BaseImageHandler):
+    """Processes rectangular images into color-sorted folders."""
 
     def __init__(self):
         super().__init__()
@@ -15,16 +18,8 @@ class RectangleHandler(BaseImageHandler):
 
     def pool_handler(self):
         super().pool_handler()
-        self.open_save_destination()
+        self._open_save_destination(PROCESSED_DIR_RECT)
         return
-
-    def open_save_destination(self) -> None:
-        if os.name == "nt":
-            abs_path = os.path.realpath(PROCESSED_DIR_RECT)
-            try:
-                os.startfile(abs_path)  # pylint: disable=no-member
-            except Exception:
-                print("something wrong with opening explorer on open save destination")
 
     # Override super.work_handler for rectangles specifically
     def _work_handler(self, file):
@@ -36,7 +31,7 @@ class RectangleHandler(BaseImageHandler):
         try:
             os.rename(f"img/{file}", f"img/{as_png}")
         except FileExistsError:
-            with open(self.log, "a", encoding='utf-8') as log:
+            with open(self.log, "a", encoding="utf-8") as log:
                 log.write(f'{self.now.strftime("%d/%m/%Y, %H:%M:%S")}: "{as_png}" ERROR! FILE ALREADY EXISTS\n')
             return
         try:
@@ -85,13 +80,13 @@ class RectangleHandler(BaseImageHandler):
 
                 self._append_processed_result_to_log(start, time.time(), as_png, self.log)
 
-            self.open_save_destination()
+            self._open_save_destination(PROCESSED_DIR_RECT)
 
             # Archive
             self._archive_image(as_png)
 
         except Exception as e:
-            with open(self.log, "a", encoding='utf-8') as log:
+            with open(self.log, "a", encoding="utf-8") as log:
                 log.write(f'{self.now.strftime("%d/%m/%Y %H:%M")}: UNEXPECTED ERROR PROCESSING {as_png}\n')
                 log.write(f"    Reason: {e}\n")
 

@@ -1,3 +1,5 @@
+"""Circle sticker handler for cropping images into circular stickers."""
+
 import os
 import time
 
@@ -10,10 +12,11 @@ from ..base_image_handler import BaseImageHandler
 
 # new class for stickers
 class CircleStickerHandler(BaseImageHandler):
+    """Crops images maintaining aspect ratio for circular stickers."""
 
     def pool_handler(self):
         super().pool_handler()
-        self.open_save_destination()
+        self._open_save_destination(PROCESSED_DIR_STICKER)
 
     def _save_image(self, image_to_save, file_name_with_extension):
         """Saves the image for stickers
@@ -27,25 +30,8 @@ class CircleStickerHandler(BaseImageHandler):
         except Exception:
             print("exception on save_image")
 
-    def open_save_destination(self) -> None:
-        if os.name == "nt":
-            abs_path = os.path.realpath(PROCESSED_DIR_STICKER)
-            try:
-                os.startfile(abs_path)  # pylint: disable=no-member
-            except Exception:
-                print("something wrong with opening explorer on open save destination")
-
-    def rename_file(self, file, new_name):
-        try:
-            os.rename(f"img/{file}", f"img/{new_name}")
-            return True
-        except FileExistsError:
-            self._append_ad_hoc_comment_to_log(
-                f'{self.now.strftime("%d/%m/%Y, %H:%M:%S")}: "{new_name}" ERROR! FILE ALREADY EXISTS\n'
-            )
-            return False
-
     def convert_image_to_rgb_with_background_colour(self, image, bg_colour: str):
+        """Convert image to RGB with specified background color."""
         converted_image = Image.new("RGB", image.size, bg_colour)
         if image.mode == "RGBA":
             try:
@@ -65,7 +51,7 @@ class CircleStickerHandler(BaseImageHandler):
         no_extension = file[: file.index(".") + 1]
         path_as_png = f"{no_extension}png"
 
-        rename_success = self.rename_file(file, path_as_png)
+        rename_success = self._rename_file(file, path_as_png)
         if not rename_success:
             return
 
@@ -86,6 +72,7 @@ class CircleStickerHandler(BaseImageHandler):
             self._append_ad_hoc_comment_to_log(f"    Reason: {e}\n", self.log)
 
     def paste_image_to_centre_of_canvas(self, desired_size, image_to_paste, curr_width, curr_height):
+        """Paste image to center of canvas with proper alignment."""
         canvas = Image.new("RGBA", desired_size, (255, 255, 255, 255))
         ImageDraw.Draw(canvas)
 
@@ -101,12 +88,14 @@ class CircleStickerHandler(BaseImageHandler):
         return canvas
 
     def create_transparent_mask(self, canvas_size, img_dimension_max):
+        """Create circular transparent mask for stickers."""
         mask = Image.new("L", canvas_size)
         mask_draw = ImageDraw.Draw(mask)
         mask_draw.ellipse((0, 0, img_dimension_max, img_dimension_max), fill=255)
         return mask
 
     def resize(self, image):
+        """Resize image maintaining aspect ratio for circular stickers."""
         # set sizes and calculate max dimensions for canvas
         curr_width, curr_height = image.size
         # the proportions of stickers are not necessarily square
