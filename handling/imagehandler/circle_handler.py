@@ -1,8 +1,10 @@
-from ..base_image_handler import BaseImageHandler
-import time
 import os
+import time
+
 from PIL import Image, ImageDraw
-from settings.static_dicts import colours, circle_dir_on_process
+
+from handling.base_image_handler import BaseImageHandler
+from settings.static_dicts import COLOURS, PROCESSED_DIR_CIRCLE
 
 
 class CircleHandler(BaseImageHandler):
@@ -29,13 +31,13 @@ class CircleHandler(BaseImageHandler):
         """
         try:
             image_to_save.save(f"img/Processed/Circles/resized_{file_name_with_extension}", quality=self.quality_val)
-        except Exception as e:
-            self.append_ad_hoc_comment_to_log(f"Exception on save_image for {file_name_with_extension}", self.log)
+        except Exception:
+            self._append_ad_hoc_comment_to_log(f"Exception on save_image for {file_name_with_extension}", self.log)
         return
 
     def open_save_destination(self) -> None:
         if os.name == "nt":
-            abs_path = os.path.realpath(circle_dir_on_process)
+            abs_path = os.path.realpath(PROCESSED_DIR_CIRCLE)
             try:
                 os.startfile(abs_path)
             except Exception as e:
@@ -59,7 +61,7 @@ class CircleHandler(BaseImageHandler):
         try:
             res = cropped_image.resize(self.standard_size)
             return res
-        except:
+        except Exception:
             print("exception on standardise_size")
         return
 
@@ -68,13 +70,13 @@ class CircleHandler(BaseImageHandler):
             os.rename(f"img/{file}", f"img/{new_name}")
             return True
         except FileExistsError:
-            self.append_ad_hoc_comment_to_log(
+            self._append_ad_hoc_comment_to_log(
                 f'{self.now.strftime("%d/%m/%Y, %H:%M:%S")}: "{new_name}" ERROR! FILE ALREADY EXISTS\n'
             )
             return False
 
     # Override super.work_handler
-    def work_handler(self, file):
+    def _work_handler(self, file):
         # Convert valid formats to png to allow RGBA
         start = time.time()
         no_extension = file[: file.index(".") + 1]
@@ -89,9 +91,9 @@ class CircleHandler(BaseImageHandler):
 
         try:
             cropped = self.resize(image)
-            isColoured: bool = self.check_is_coloured(no_extension)
+            is_coloured: bool = self.check_is_coloured(no_extension)
 
-            if isColoured:
+            if is_coloured:
                 colour_extension = self.determine_colour_extension(no_extension)
                 # Convert the current picture into one of the standard colours
                 final_image = self.recolour(cropped, no_extension, colour_extension)
@@ -100,16 +102,16 @@ class CircleHandler(BaseImageHandler):
             else:
                 darkened_image = self.recolour_darken(cropped)
                 self._save_image(darkened_image, f"{no_extension}png")
-            self.archive_image(f"{no_extension}png")
+            self._archive_image(f"{no_extension}png")
 
             # Write to log
-            self.append_processed_result_to_log(start, time.time(), as_png, self.log)
+            self._append_processed_result_to_log(start, time.time(), as_png, self.log)
 
         except Exception as e:
-            self.append_ad_hoc_comment_to_log(
+            self._append_ad_hoc_comment_to_log(
                 f'{self.now.strftime("%d/%m/%Y %H:%M")}: UNEXPECTED ERROR PROCESSING {as_png}\n', self.log
             )
-            self.append_ad_hoc_comment_to_log(f"    Reason: {e}\n")
+            self._append_ad_hoc_comment_to_log(f"    Reason: {e}\n")
 
     def resize(self, image):
         # set sizes and calculate max dimensions for canvas
@@ -139,15 +141,15 @@ class CircleHandler(BaseImageHandler):
         is_coloured = filename_without_extension.count("&") == 1
 
         if not is_coloured:
-            self.append_ad_hoc_comment_to_log(
+            self._append_ad_hoc_comment_to_log(
                 f"{filename_without_extension} colour not specified. Processing in B&W format", self.log
             )
 
         return is_coloured
 
     def recolour_darken(self, cropped):
-        cropped = self.colour_sub(
-            cropped, colours["Black"]
+        cropped = self._colour_sub(
+            cropped, COLOURS["Black"]
         )  # black (darken the grey pixels so contrast is better when printed on paper)
         return cropped
 
@@ -160,15 +162,15 @@ class CircleHandler(BaseImageHandler):
 
         match colour_extension:
             case "&R":
-                cropped = self.colour_sub(cropped, colours["R"])  # red
+                cropped = self._colour_sub(cropped, COLOURS["R"])  # red
             case "&G":
-                cropped = self.colour_sub(cropped, colours["G"])  # medium sea green
+                cropped = self._colour_sub(cropped, COLOURS["G"])  # medium sea green
             case "&B":
-                cropped = self.colour_sub(cropped, colours["B"])  # cornflour blue
+                cropped = self._colour_sub(cropped, COLOURS["B"])  # cornflour blue
             case "&P":
-                cropped = self.colour_sub(cropped, colours["P"])  # hot pink
+                cropped = self._colour_sub(cropped, COLOURS["P"])  # hot pink
             case "&PP":
-                cropped = self.colour_sub(cropped, colours["PP"])  # dark violet
+                cropped = self._colour_sub(cropped, COLOURS["PP"])  # dark violet
             case "&E":  # make a copy for all colours
                 self.recolour_create_each_colour(cropped, filename_without_extension)
                 # exit out so we don't save the &E original picture in work handler
@@ -184,8 +186,8 @@ class CircleHandler(BaseImageHandler):
         # we want to have one cropped image and recolour it for each standard colour
         # saving multiple copies
 
-        for code, colour in colours.items():
-            colour_cropped = self.colour_sub(cropped.copy(), colour)
+        for code, colour in COLOURS.items():
+            colour_cropped = self._colour_sub(cropped.copy(), colour)
             colour_cropped = self._standardise_size(colour_cropped)
             colour_as_png = f"{filename_without_extension}{code}.png"
             self._save_image(colour_cropped, colour_as_png)

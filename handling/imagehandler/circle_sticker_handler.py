@@ -1,15 +1,15 @@
-from ..base_image_handler import BaseImageHandler
-import time
 import os
+import time
+
 from PIL import Image, ImageDraw
-from settings.static_dicts import sticker_dir_on_process
+
+from settings.static_dicts import PROCESSED_DIR_STICKER
+
+from ..base_image_handler import BaseImageHandler
 
 
 # new class for stickers
 class CircleStickerHandler(BaseImageHandler):
-
-    def __init__(self):
-        super().__init__()
 
     def pool_handler(self):
         super().pool_handler()
@@ -25,13 +25,13 @@ class CircleStickerHandler(BaseImageHandler):
         """
         try:
             image_to_save.save(f"img/Processed/Stickers/resized_{file_name_with_extension}", quality=self.quality_val)
-        except Exception as e:
+        except Exception:
             print("exception on save_image")
         return
 
     def open_save_destination(self) -> None:
         if os.name == "nt":
-            abs_path = os.path.realpath(sticker_dir_on_process)
+            abs_path = os.path.realpath(PROCESSED_DIR_STICKER)
             try:
                 os.startfile(abs_path)
             except Exception as e:
@@ -43,18 +43,18 @@ class CircleStickerHandler(BaseImageHandler):
             os.rename(f"img/{file}", f"img/{new_name}")
             return True
         except FileExistsError:
-            self.append_ad_hoc_comment_to_log(
+            self._append_ad_hoc_comment_to_log(
                 f'{self.now.strftime("%d/%m/%Y, %H:%M:%S")}: "{new_name}" ERROR! FILE ALREADY EXISTS\n'
             )
             return False
 
-    def convert_image_to_RGB_with_specific_background_colour(self, image, colour_string: str):
-        converted_image = Image.new("RGB", image.size, colour_string)
+    def convert_image_to_rgb_with_background_colour(self, image, bg_colour: str):
+        converted_image = Image.new("RGB", image.size, bg_colour)
         if image.mode == "RGBA":
             try:
                 converted_image.paste(image, (0, 0), image)
-            except:
-                self.append_ad_hoc_comment_to_log(f"bad transparency mask on {image}. bypassing...\n", self.log)
+            except Exception:
+                self._append_ad_hoc_comment_to_log(f"bad transparency mask on {image}. bypassing...\n", self.log)
                 print(f"WARNING: bad transparency mask on {image}. bypassing...")
                 converted_image.paste(image, (0, 0))
         else:
@@ -62,7 +62,7 @@ class CircleStickerHandler(BaseImageHandler):
         return converted_image
 
     # override super.work_handler
-    def work_handler(self, file):
+    def _work_handler(self, file):
         # Convert valid formats to png to allow RGBA
         start = time.time()
         no_extension = file[: file.index(".") + 1]
@@ -75,18 +75,18 @@ class CircleStickerHandler(BaseImageHandler):
         # prep the image with a white background (sticker background must be white)
         # this accommodates when a png is provided which already has a transparent bg
         image = Image.open(f"img/{path_as_png}")
-        image = self.convert_image_to_RGB_with_specific_background_colour(image, "white")
+        image = self.convert_image_to_rgb_with_background_colour(image, "white")
 
         try:
             sticker_img = self.resize(image)
-            self.append_processed_result_to_log(start, time.time(), path_as_png, self.log)
+            self._append_processed_result_to_log(start, time.time(), path_as_png, self.log)
             self._save_image(sticker_img, path_as_png)
-            self.archive_image(path_as_png)
+            self._archive_image(path_as_png)
         except Exception as e:
-            self.append_ad_hoc_comment_to_log(
+            self._append_ad_hoc_comment_to_log(
                 f'{self.now.strftime("%d/%m/%Y %H:%M")}: UNEXPECTED ERROR PROCESSING {path_as_png}\n', self.log
             )
-            self.append_ad_hoc_comment_to_log(f"    Reason: {e}\n", self.log)
+            self._append_ad_hoc_comment_to_log(f"    Reason: {e}\n", self.log)
 
     def paste_image_to_centre_of_canvas(self, desired_size, image_to_paste, curr_width, curr_height):
         canvas = Image.new("RGBA", desired_size, (255, 255, 255, 255))

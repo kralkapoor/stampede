@@ -1,14 +1,16 @@
 import base64
 import os
-from settings.avatar_prompt import BASE_PROMPT
-from uuid import uuid4
 import tkinter as tk
+from datetime import datetime
 from tkinter import messagebox
+
 from PIL import Image, ImageTk
-from .base_image_handler import BaseImageHandler
-from settings.static_dicts import avatar_dir_on_process
+
+from handling.base_image_handler import BaseImageHandler
 from handling.util.util import create_openai_client
 from handling.util.view_util import show_processing_dialog
+from settings.avatar_prompt import BASE_PROMPT
+from settings.static_dicts import PROCESSED_DIR_AVATAR
 
 
 class AvatarEditHandler(BaseImageHandler):
@@ -29,7 +31,7 @@ class AvatarEditHandler(BaseImageHandler):
         user_prompt, window = self._get_prompt_with_preview()
         window.destroy()
         print(f"edit prompt = {user_prompt}")
-        self.append_ad_hoc_comment_to_log(f"Avatar edit with prompt: {user_prompt}")
+        self._append_ad_hoc_comment_to_log(f"Avatar edit with prompt: {user_prompt}")
 
         # Show processing feedback and execute in background
         show_processing_dialog(
@@ -51,10 +53,10 @@ class AvatarEditHandler(BaseImageHandler):
                 "No Image Found", "Please place exactly one image file in the img directory for editing."
             )
             return False
-        elif len(image_files) > 1:
+        if len(image_files) > 1:
             messagebox.showerror(
                 "Multiple Images Found",
-                f"Found {len(image_files)} images in img directory. Please ensure only one image is present for editing.",
+                f"{len(image_files)} images in img directory. Please ensure only one image is present for editing.",
             )
             return False
 
@@ -144,16 +146,9 @@ class AvatarEditHandler(BaseImageHandler):
 
     def _execute_edit_request(self, user_prompt: str) -> bool:
         try:
-            # # Load exemplar images like avatar_handler does
-            # exemplar_images = [
-            #     open(f"{avatar_exemplars_dir}/{file}", "rb") for file in os.listdir(avatar_exemplars_dir)
-            # ]
-
             # Open the single image file for editing
             with open(f"img/{self.image_file}", "rb") as image_file:
                 # Add the image to edit to the exemplar images list
-                # edit_images = exemplar_images + [image_file]
-
                 result = self.client.images.edit(
                     model="gpt-image-1",
                     image=image_file,
@@ -168,20 +163,21 @@ class AvatarEditHandler(BaseImageHandler):
             for returned_image in result.data:
                 image_base64 = returned_image.b64_json
                 image_bytes = base64.b64decode(image_base64)
-                # Save the image to a file
-                output_filename = f"edited_{self.image_file.split('.')[0]}_{str(uuid4())}.png"
-                with open(f"{avatar_dir_on_process}/{output_filename}", "wb") as f:
+                # Save the image to a file with timestamp prefix
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+                output_filename = f"{timestamp}_edited.png"
+                with open(f"{PROCESSED_DIR_AVATAR}/{output_filename}", "wb") as f:
                     f.write(image_bytes)
                 print(f"Saved edited image: {output_filename}")
 
             # Archive the processed input image
-            self.archive_image(self.image_file)
+            self._archive_image(self.image_file)
             print(f"Archived input image: {self.image_file}")
 
             return True
 
         except Exception as e:
-            self.append_ad_hoc_comment_to_log(f"Error in edit request: {str(e)}")
+            self._append_ad_hoc_comment_to_log(f"Error in edit request: {str(e)}")
             print(f"Error in edit request: {str(e)}")
             return False
 

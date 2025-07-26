@@ -1,5 +1,6 @@
 import os
-from settings.static_dicts import rect_paths
+
+from settings.static_dicts import RECT_PATHS
 
 DIRS = (
     "img/",
@@ -14,20 +15,20 @@ DIRS = (
 
 
 def init_base_dirs():
-    for dir in DIRS:
+    for directory in DIRS:
         try:
-            os.mkdir(dir)
-            print(f"Created dir for {dir}")
+            os.mkdir(directory)
+            print(f"Created dir for {directory}")
         except FileExistsError:
             pass
 
 
 def init_rect_dirs():
-    rect_dirs = [f"img/Processed/Rectangles/{rect_paths[key]}" for key in rect_paths]
-    for dir in rect_dirs:
+    rect_dirs = [f"img/Processed/Rectangles/{RECT_PATHS[key]}" for key in RECT_PATHS]
+    for directory in rect_dirs:
         try:
-            os.mkdir(dir)
-            print(f"Created dir for {dir}")
+            os.mkdir(directory)
+            print(f"Created dir for {directory}")
         except FileExistsError:
             pass
 

@@ -1,6 +1,6 @@
+import threading
 import tkinter as tk
 from tkinter import messagebox
-import threading
 
 
 def show_processing_dialog(master_window: tk.Tk, title: str, message: str, processing_callback):

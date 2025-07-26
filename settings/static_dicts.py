@@ -1,6 +1,6 @@
 # standard mappings here
 
-colours = {
+COLOURS = {
     "R": (255, 0, 0, 255),  # Red
     "G": (119, 221, 119),  # Pastel green
     "B": (100, 149, 237, 255),  # Cornflour Blue
@@ -9,7 +9,7 @@ colours = {
     "Black": (0, 0, 0, 255),  # Just Black
 }
 
-rect_paths = {
+RECT_PATHS = {
     "Custom": "1 Custom",
     "Black": "2 Black",
     "R": "3 Red",
@@ -19,13 +19,14 @@ rect_paths = {
     "PP": "7 Dark Violet",
 }
 
-valid_formats_cfg = ("jpg", "png", "jpeg", "webp")
-image_quality_cfg = 100
-standard_img_size_cfg = None  # (200,200)
-log_location = "settings/log.txt"
+VALID_FORMATS = ("jpg", "png", "jpeg", "webp")
+IMAGE_QUALITY = 100
+STANDARD_IMG_SIZE = None  # (200,200)
+LOG_LOCATION = "settings/log.txt"
 
-circle_dir_on_process = "img/Processed/Circles"
-rectangle_dir_on_process = "img/Processed/Rectangles"
-sticker_dir_on_process = "img/Processed/Stickers"
-avatar_dir_on_process = "img/Processed/Avatars"
-avatar_exemplars_dir = "img/Processed/Avatars/Exemplars"
+IMAGE_DIR = "img"
+PROCESSED_DIR_CIRCLE = "img/Processed/Circles"
+PROCESSED_DIR_RECT = "img/Processed/Rectangles"
+PROCESSED_DIR_STICKER = "img/Processed/Stickers"
+PROCESSED_DIR_AVATAR = "img/Processed/Avatars"
+EXAMPLE_DIR_AVATAR = "img/Processed/Avatars/Exemplars"

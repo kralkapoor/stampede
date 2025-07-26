@@ -1,7 +1,9 @@
-from dotenv import load_dotenv
-from handling.exception.configuration_error import ConfigurationError
-from openai import OpenAI
 import os
+
+from dotenv import load_dotenv
+from openai import OpenAI
+
+from handling.exception.configuration_error import ConfigurationError
 
 
 def create_openai_client():

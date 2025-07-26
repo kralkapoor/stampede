@@ -1,11 +1,13 @@
 import tkinter as tk
 from tkinter import Tk
-from PIL import ImageTk, Image
-from handling.imagehandler.circle_handler import CircleHandler
-from handling.imagehandler.rectangle_handler import RectangleHandler
-from handling.imagehandler.circle_sticker_handler import CircleStickerHandler
-from handling.avatar_handler import AvatarHandler
+
+from PIL import Image, ImageTk
+
 from handling.avatar_edit_handler import AvatarEditHandler
+from handling.avatar_handler import AvatarHandler
+from handling.imagehandler.circle_handler import CircleHandler
+from handling.imagehandler.circle_sticker_handler import CircleStickerHandler
+from handling.imagehandler.rectangle_handler import RectangleHandler
 
 
 class GUI:
