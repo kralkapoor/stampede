@@ -78,6 +78,6 @@ def show_processing_dialog(master_window: tk.Tk, title: str, message: str, proce
     processing_dialog.wait_window()
 
     # Return result or raise exception
-    if result_container["exception"]:
+    if result_container["exception"] is not None:
         raise result_container["exception"]
     return result_container["result"]

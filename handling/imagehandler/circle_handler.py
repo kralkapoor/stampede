@@ -20,7 +20,6 @@ class CircleHandler(BaseImageHandler):
     def pool_handler(self):
         super().pool_handler()
         self.open_save_destination()
-        return
 
     def _save_image(self, image_to_save, file_name_with_extension):
         """Saves the image for circle processing into a Circles subfolder
@@ -33,16 +32,14 @@ class CircleHandler(BaseImageHandler):
             image_to_save.save(f"img/Processed/Circles/resized_{file_name_with_extension}", quality=self.quality_val)
         except Exception:
             self._append_ad_hoc_comment_to_log(f"Exception on save_image for {file_name_with_extension}", self.log)
-        return
 
     def open_save_destination(self) -> None:
         if os.name == "nt":
             abs_path = os.path.realpath(PROCESSED_DIR_CIRCLE)
             try:
-                os.startfile(abs_path)
-            except Exception as e:
+                os.startfile(abs_path)  # pylint: disable=no-member
+            except Exception:
                 print("something wrong with opening explorer on open save destination")
-        return
 
     def _standardise_size(self, cropped_image):
         """Resize the given image to the configured standard size
@@ -55,7 +52,7 @@ class CircleHandler(BaseImageHandler):
         """
 
         # if the cfg size is not specified, just take the smallest dimension for best resolution
-        if self.standard_size == None:
+        if self.standard_size is None:
             self.standard_size = (min(cropped_image.size), min(cropped_image.size))
 
         try:
@@ -63,7 +60,7 @@ class CircleHandler(BaseImageHandler):
             return res
         except Exception:
             print("exception on standardise_size")
-        return
+            return None
 
     def rename_file(self, file, new_name):
         try:

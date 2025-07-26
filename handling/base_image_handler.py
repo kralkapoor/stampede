@@ -47,12 +47,10 @@ class BaseImageHandler:
             file (Image): Each image in the img generator
         """
         print("Requires override")
-        return
 
     def _append_ad_hoc_comment_to_log(self, comment, log_file=LOG_LOCATION) -> None:
-        with open(f"{log_file}", "a") as log:
+        with open(f"{log_file}", "a", encoding='utf-8') as log:
             log.write(comment)
-        return
 
     def _append_processed_result_to_log(self, start_time: float, end_time: float, img_file, log_file: str):
         """Append a message to the log saying whether the img was successfully processed or not
@@ -63,7 +61,7 @@ class BaseImageHandler:
             img_file (_type_): each image file in the img generator
             log_file (str): the name of the log in ./config
         """
-        with open(f"{log_file}", "a") as log:
+        with open(f"{log_file}", "a", encoding='utf-8') as log:
             log.write(
                 f'{self.now.strftime("%d/%m/%Y %H:%M")}: {img_file} processed in {round(end_time - start_time, 2)}s\n'
             )

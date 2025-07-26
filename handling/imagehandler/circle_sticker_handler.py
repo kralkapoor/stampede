@@ -14,7 +14,6 @@ class CircleStickerHandler(BaseImageHandler):
     def pool_handler(self):
         super().pool_handler()
         self.open_save_destination()
-        return
 
     def _save_image(self, image_to_save, file_name_with_extension):
         """Saves the image for stickers
@@ -27,16 +26,14 @@ class CircleStickerHandler(BaseImageHandler):
             image_to_save.save(f"img/Processed/Stickers/resized_{file_name_with_extension}", quality=self.quality_val)
         except Exception:
             print("exception on save_image")
-        return
 
     def open_save_destination(self) -> None:
         if os.name == "nt":
             abs_path = os.path.realpath(PROCESSED_DIR_STICKER)
             try:
-                os.startfile(abs_path)
-            except Exception as e:
+                os.startfile(abs_path)  # pylint: disable=no-member
+            except Exception:
                 print("something wrong with opening explorer on open save destination")
-        return
 
     def rename_file(self, file, new_name):
         try:

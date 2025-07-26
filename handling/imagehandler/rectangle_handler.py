@@ -22,10 +22,9 @@ class RectangleHandler(BaseImageHandler):
         if os.name == "nt":
             abs_path = os.path.realpath(PROCESSED_DIR_RECT)
             try:
-                os.startfile(abs_path)
-            except Exception as e:
+                os.startfile(abs_path)  # pylint: disable=no-member
+            except Exception:
                 print("something wrong with opening explorer on open save destination")
-        return
 
     # Override super.work_handler for rectangles specifically
     def _work_handler(self, file):
@@ -37,7 +36,7 @@ class RectangleHandler(BaseImageHandler):
         try:
             os.rename(f"img/{file}", f"img/{as_png}")
         except FileExistsError:
-            with open(self.log, "a") as log:
+            with open(self.log, "a", encoding='utf-8') as log:
                 log.write(f'{self.now.strftime("%d/%m/%Y, %H:%M:%S")}: "{as_png}" ERROR! FILE ALREADY EXISTS\n')
             return
         try:
@@ -92,7 +91,7 @@ class RectangleHandler(BaseImageHandler):
             self._archive_image(as_png)
 
         except Exception as e:
-            with open(self.log, "a") as log:
+            with open(self.log, "a", encoding='utf-8') as log:
                 log.write(f'{self.now.strftime("%d/%m/%Y %H:%M")}: UNEXPECTED ERROR PROCESSING {as_png}\n')
                 log.write(f"    Reason: {e}\n")
 
