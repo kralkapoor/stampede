@@ -39,9 +39,9 @@ class BaseImageHandler:
         Loops through the img directory to identify suitable images
 
         Returns:
-            Generator: of all the images for processing
+            List: of all the images for processing
         """
-        files = (file for file in self.img_dir if self._is_valid_file_type(file))
+        files = [file for file in self.img_dir if self._is_valid_file_type(file)]
         return files
 
     def _work_handler(self, file):
