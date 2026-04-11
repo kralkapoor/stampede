@@ -6,6 +6,7 @@ COLOURS = {
     "B": (100, 149, 237, 255),  # Cornflour Blue
     "P": (255, 105, 180, 255),  # Hot Pink
     "PP": (148, 0, 211, 255),  # Dark Violet
+    "O": (250, 165, 25), # Stampede Orange
     "Black": (0, 0, 0, 255),  # Just Black
 }
 
@@ -17,6 +18,7 @@ RECT_PATHS = {
     "G": "5 Seagreen",
     "B": "6 Cornflour Blue",
     "PP": "7 Dark Violet",
+    "O": "8 Orange",
 }
 
 VALID_FORMATS = ("jpg", "png", "jpeg", "webp")

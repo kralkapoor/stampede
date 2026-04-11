@@ -157,6 +157,8 @@ class CircleHandler(BaseImageHandler):
                 cropped = self._colour_sub(cropped, COLOURS["P"])  # hot pink
             case "&PP":
                 cropped = self._colour_sub(cropped, COLOURS["PP"])  # dark violet
+            case "&O":
+                cropped = self._colour_sub(cropped, COLOURS["O"]) # stampede orange
             case "&E":  # make a copy for all colours
                 self.recolour_create_each_colour(cropped, filename_without_extension)
                 # exit out so we don't save the &E original picture in work handler

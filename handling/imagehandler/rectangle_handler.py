@@ -61,6 +61,8 @@ class RectangleHandler(BaseImageHandler):
                         canvas = self._colour_sub(canvas, COLOURS["P"])  # hot pink
                     case "&PP":
                         canvas = self._colour_sub(canvas, COLOURS["PP"])  # dark violet
+                    case "&O":
+                        canvas = self._colour_sub(canvas, COLOURS["O"])
                     case _:
                         canvas = self._colour_sub(canvas, COLOURS["Black"])  # default to black if not specified
 
