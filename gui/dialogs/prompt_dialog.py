@@ -5,7 +5,8 @@ dialog (Command pattern). The caller creates it, calls exec(), and inspects
 the result — keeping prompt collection separate from avatar processing logic.
 """
 
-from PySide6.QtWidgets import QDialog, QHBoxLayout, QPushButton, QTextEdit, QVBoxLayout
+from PySide6.QtWidgets import (QDialog, QHBoxLayout, QPushButton, QTextEdit,
+                               QVBoxLayout)
 
 
 class PromptDialog(QDialog):

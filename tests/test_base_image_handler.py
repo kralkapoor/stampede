@@ -118,7 +118,9 @@ class TestArchiveImage:
 
     def test_os_error_is_logged(self, base_handler, monkeypatch):
         # GIVEN a file that can't be moved (e.g. locked by another process)
-        monkeypatch.setattr("handling.base_image_handler.os.replace", lambda s, d: (_ for _ in ()).throw(OSError("locked")))
+        monkeypatch.setattr(
+            "handling.base_image_handler.os.replace", lambda s, d: (_ for _ in ()).throw(OSError("locked"))
+        )
         logged = []
         monkeypatch.setattr(base_handler, "_append_ad_hoc_comment_to_log", lambda msg: logged.append(msg))
 

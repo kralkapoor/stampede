@@ -2,9 +2,10 @@
 
 import mimetypes
 
+from openai.types.image import Image
+
 from handling.base_image_handler import BaseImageHandler
 from handling.util.openai_util import create_openai_client
-from openai.types.image import Image
 
 # Ensure all image formats accepted by gpt-image-1.5 are registered —
 # Python on Windows doesn't always include webp, and other platforms may have gaps

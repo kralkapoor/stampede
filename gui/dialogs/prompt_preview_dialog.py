@@ -7,14 +7,8 @@ so avatar_edit_handler doesn't need to know about any GUI framework.
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import (
-    QDialog,
-    QHBoxLayout,
-    QLabel,
-    QPushButton,
-    QTextEdit,
-    QVBoxLayout,
-)
+from PySide6.QtWidgets import (QDialog, QHBoxLayout, QLabel, QPushButton,
+                               QTextEdit, QVBoxLayout)
 
 
 class PromptPreviewDialog(QDialog):

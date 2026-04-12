@@ -5,12 +5,8 @@ from datetime import datetime
 from multiprocessing import Pool
 
 from settings.init_dirs import init_directories
-from settings.static_dicts import (
-    IMAGE_QUALITY,
-    LOG_LOCATION,
-    STANDARD_IMG_SIZE,
-    VALID_FORMATS,
-)
+from settings.static_dicts import (IMAGE_QUALITY, LOG_LOCATION,
+                                   STANDARD_IMG_SIZE, VALID_FORMATS)
 
 
 class BaseImageHandler:

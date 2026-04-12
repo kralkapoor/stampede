@@ -9,14 +9,8 @@ import sys
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import (
-    QHBoxLayout,
-    QLabel,
-    QMessageBox,
-    QPushButton,
-    QVBoxLayout,
-    QWidget,
-)
+from PySide6.QtWidgets import (QHBoxLayout, QLabel, QMessageBox, QPushButton,
+                               QVBoxLayout, QWidget)
 
 from gui.dialogs.processing_dialog import ProcessingDialog
 from gui.dialogs.prompt_dialog import PromptDialog

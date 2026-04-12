@@ -40,7 +40,9 @@ class TestValidateSingleImage:
 
     def test_filters_non_image_files(self, avatar_edit_handler, monkeypatch):
         # GIVEN a mix of image and non-image files
-        monkeypatch.setattr("handling.avatar_edit_handler.os.listdir", lambda _: ["readme.txt", "avatar.png", ".gitkeep"])
+        monkeypatch.setattr(
+            "handling.avatar_edit_handler.os.listdir", lambda _: ["readme.txt", "avatar.png", ".gitkeep"]
+        )
 
         # WHEN validating
         # THEN only the image file should be considered
