@@ -49,6 +49,13 @@ def circle_handler():
 
 
 @pytest.fixture
+def rectangle_handler():
+    from handling.imagehandler.rectangle_handler import RectangleHandler
+
+    return RectangleHandler()
+
+
+@pytest.fixture
 def avatar_handler(mock_openai_client):
     from handling.avatar_handler import AvatarHandler
 

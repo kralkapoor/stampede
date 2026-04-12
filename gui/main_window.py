@@ -91,7 +91,6 @@ class MainWindow(QWidget):
             return
 
         user_prompt = prompt_dialog.get_prompt()
-        print(f"prompt = {user_prompt}")
 
         self._run_with_processing_dialog(
             "Processing...",
@@ -115,7 +114,6 @@ class MainWindow(QWidget):
             return
 
         user_prompt = preview_dialog.get_prompt()
-        print(f"edit prompt = {user_prompt}")
 
         self._run_with_processing_dialog(
             "Processing...",
