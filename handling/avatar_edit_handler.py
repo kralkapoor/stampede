@@ -101,6 +101,7 @@ class AvatarEditHandler(AvatarBaseHandler):
             # Resize image for preview (max 300x300)
             pil_image.thumbnail((300, 300), Image.Resampling.LANCZOS)
             photo = ImageTk.PhotoImage(pil_image)
+            pil_image.close()
 
             image_label = tk.Label(image_frame, image=photo)
             image_label.image = photo  # Keep a reference

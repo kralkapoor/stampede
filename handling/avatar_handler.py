@@ -36,7 +36,11 @@ class AvatarHandler(AvatarBaseHandler):
             lambda: self._execute_model_request(user_prompt, images_for_processing),
         )
 
-        # Archive all processed input images (files are now closed)
+        # Files opened earlier without the with(open) context manager, so requires manual closing 
+        for file in images_for_processing:
+            file.close()
+
+        # Archive all processed images
         for file in images_for_processing:
             file_name = file.name.split("/")[-1]  # Only need the actual filename, not entire path
             self._archive_image(file_name)
@@ -84,26 +88,25 @@ class AvatarHandler(AvatarBaseHandler):
         return input_files
 
     def _execute_model_request(self, user_prompt: str, input_images: list) -> list:
-        try:
-            processed_images = []
+        processed_images = []
 
-            for image in input_images:
-                res = super()._execute_edit_request(user_prompt, image)
-                processed_images.append((image.name, res))
+        for image in input_images:
+            res = super()._execute_edit_request(user_prompt, image)
+            file_name = image.name.split("/")[-1]
+            if res is None:
+                self._append_ad_hoc_comment_to_log(f"Failed to generate avatar for: {file_name}\n")
+                print(f"Failed to generate avatar for: {file_name}")
+                continue
+            processed_images.append((file_name, res))
 
-            self._save_avatar(processed_images)
-            return processed_images
-
-        except Exception as e:
-            self._append_ad_hoc_comment_to_log(f"Error in avatar generation: {str(e)}")
-            print(f"Error in avatar generation: {str(e)}")
-            return []
+        self._save_avatar(processed_images)
+        return processed_images
 
     def _save_avatar(self, response_obj):
-        for input_path, returned_image in response_obj:
+        for input_name, returned_image in response_obj:
             image_base64 = returned_image.b64_json
             image_bytes = base64.b64decode(image_base64)
-            input_stem = os.path.splitext(input_path.split("/")[-1])[0]
+            input_stem = os.path.splitext(input_name)[0]
             output_filename = f"{input_stem}_avatar.png"
             with open(f"{PROCESSED_DIR_AVATAR}/{output_filename}", "wb") as f:
                 f.write(image_bytes)
