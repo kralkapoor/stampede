@@ -71,3 +71,10 @@ To distribute the application as a standalone executable that requires no Python
    uv run pyinstaller --onedir --windowed --add-data "assets;assets" main.pyw
    ```
 3. The self-contained `dist/main/` folder can be copied to a network share or another machine and run directly. The app will auto-create `img/` and processing subdirectories on first launch.
+
+### Automated Builds (CI/CD)
+A GitHub Actions workflow automatically builds the Windows exe on every push to `main`. The workflow runs tests first, then builds via PyInstaller on a Windows runner and uploads the result as a downloadable artifact.
+
+To download: **Actions tab → click the workflow run → Artifacts → `stampede-windows`**
+
+You can also trigger a build manually from the Actions tab using the "Run workflow" button.
