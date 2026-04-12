@@ -1,11 +1,14 @@
 """Avatar generation handler using OpenAI's image generation API."""
 
 import base64
+import logging
 import os
 
 from handling.avatar_base_handler import AvatarBaseHandler
 from settings.avatar_prompt import BASE_PROMPT
 from settings.static_dicts import IMAGE_DIR, PROCESSED_DIR_AVATAR
+
+logger = logging.getLogger(__name__)
 
 
 class AvatarHandler(AvatarBaseHandler):
@@ -18,7 +21,7 @@ class AvatarHandler(AvatarBaseHandler):
 
     def process_avatar(self, user_prompt: str) -> list:
         """Process avatar generation. Returns list of processed image tuples."""
-        self._append_ad_hoc_comment_to_log(f"Avatar handling with prompt: {user_prompt}")
+        logger.info("Generating avatars with prompt: %s", user_prompt)
 
         images_for_processing = self._get_input_images()
         try:
@@ -30,7 +33,7 @@ class AvatarHandler(AvatarBaseHandler):
         for file in images_for_processing:
             file_name = file.name.split("/")[-1]
             self._archive_image(file_name)
-            print(f"Archived input image: {file_name}")
+            logger.info("Archived input image: %s", file_name)
 
         return result
 
@@ -47,8 +50,7 @@ class AvatarHandler(AvatarBaseHandler):
             res = super()._execute_edit_request(user_prompt, image)
             file_name = image.name.split("/")[-1]
             if res is None:
-                self._append_ad_hoc_comment_to_log(f"Failed to generate avatar for: {file_name}\n")
-                print(f"Failed to generate avatar for: {file_name}")
+                logger.error("Failed to generate avatar for: %s", file_name)
                 continue
             processed_images.append((file_name, res))
 
@@ -63,4 +65,4 @@ class AvatarHandler(AvatarBaseHandler):
             output_filename = f"{input_stem}_avatar.png"
             with open(f"{PROCESSED_DIR_AVATAR}/{output_filename}", "wb") as f:
                 f.write(image_bytes)
-            self._append_ad_hoc_comment_to_log(f"Saved avatar: {output_filename}")
+            logger.info("Saved avatar: %s", output_filename)

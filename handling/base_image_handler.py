@@ -1,12 +1,14 @@
 """Base image handler providing common functionality for image processing."""
 
+import logging
 import os
-from datetime import datetime
 from multiprocessing import Pool
 
 from settings.init_dirs import init_directories
-from settings.static_dicts import (IMAGE_QUALITY, LOG_LOCATION,
-                                   STANDARD_IMG_SIZE, VALID_FORMATS)
+from settings.static_dicts import (IMAGE_QUALITY, STANDARD_IMG_SIZE,
+                                   VALID_FORMATS)
+
+logger = logging.getLogger(__name__)
 
 
 class BaseImageHandler:
@@ -21,10 +23,7 @@ class BaseImageHandler:
         self.curr_width = 0
         self.curr_height = 0
         self.curr_canvas_size = (0, 0)
-        self.now = datetime.now()
         self.img_dir = os.listdir("./img")
-        self.log = LOG_LOCATION
-        # self.max_cores = multiprocessing.cpu_count()
 
     def execute(self):
         """
@@ -41,7 +40,7 @@ class BaseImageHandler:
         Args:
             file (Image): Each image in the img generator
         """
-        print("Requires override")
+        logger.warning("_handler_function not implemented by subclass")
 
     def _get_input_images(self) -> list[str]:
         """
@@ -52,24 +51,6 @@ class BaseImageHandler:
         """
         files = [file for file in self.img_dir if self._is_valid_file_type(file)]
         return files
-
-    def _append_ad_hoc_comment_to_log(self, comment, log_file=LOG_LOCATION) -> None:
-        with open(f"{log_file}", "a", encoding="utf-8") as log:
-            log.write(comment)
-
-    def _append_processed_result_to_log(self, start_time: float, end_time: float, img_file, log_file: str):
-        """Append a message to the log saying whether the img was successfully processed or not
-
-        Args:
-            start_time (float): the time that the execute method was executed
-            end_time (float): the time the execute method completed
-            img_file (_type_): each image file in the img generator
-            log_file (str): the name of the log in ./config
-        """
-        with open(f"{log_file}", "a", encoding="utf-8") as log:
-            log.write(
-                f'{self.now.strftime("%d/%m/%Y %H:%M")}: {img_file} processed in {round(end_time - start_time, 2)}s\n'
-            )
 
     def _colour_sub(self, image, colour: tuple):
         """Method to replace pixels over a certain opacity with that of another specified colour
@@ -100,7 +81,7 @@ class BaseImageHandler:
             try:
                 os.startfile(abs_path)  # pylint: disable=no-member
             except Exception:
-                print("something wrong with opening explorer on open save destination")
+                logger.error("Failed to open save destination: %s", processed_dir)
 
     def _rename_file(self, file: str, new_name: str) -> bool:
         """Rename file from old to new name."""
@@ -108,9 +89,7 @@ class BaseImageHandler:
             os.rename(f"img/{file}", f"img/{new_name}")
             return True
         except FileExistsError:
-            self._append_ad_hoc_comment_to_log(
-                f'{self.now.strftime("%d/%m/%Y, %H:%M:%S")}: "{new_name}" ERROR! FILE ALREADY EXISTS\n'
-            )
+            logger.error("Rename failed, file already exists: %s", new_name)
             return False
 
     def _archive_image(self, image_to_archive):
@@ -122,7 +101,7 @@ class BaseImageHandler:
         try:
             os.replace(f"img/{image_to_archive}", f"img/zArchive/{image_to_archive}")
         except OSError as e:
-            self._append_ad_hoc_comment_to_log(f"Unable to archive {image_to_archive}: {str(e)}")
+            logger.error("Failed to archive %s: %s", image_to_archive, e)
 
     def _is_valid_file_type(self, file_name: str):
         if not file_name:

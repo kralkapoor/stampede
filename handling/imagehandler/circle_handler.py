@@ -1,5 +1,6 @@
 """Circle handler for processing circular stamps with color themes."""
 
+import logging
 import os
 import time
 
@@ -7,6 +8,8 @@ from PIL import Image, ImageDraw
 
 from handling.base_image_handler import BaseImageHandler
 from settings.static_dicts import COLOURS, PROCESSED_DIR_CIRCLE
+
+logger = logging.getLogger(__name__)
 
 
 class CircleHandler(BaseImageHandler):
@@ -33,7 +36,7 @@ class CircleHandler(BaseImageHandler):
         try:
             image_to_save.save(f"img/Processed/Circles/resized_{file_name_with_extension}", quality=self.quality_val)
         except Exception:
-            self._append_ad_hoc_comment_to_log(f"Exception on save_image for {file_name_with_extension}", self.log)
+            logger.error("Failed to save image: %s", file_name_with_extension)
 
     def _standardise_size(self, cropped_image):
         """Resize the given image to the configured standard size
@@ -53,7 +56,7 @@ class CircleHandler(BaseImageHandler):
             res = cropped_image.resize(self.standard_size)
             return res
         except Exception:
-            print("exception on standardise_size")
+            logger.error("Failed to standardise image size")
             return None
 
     def _handler_function(self, file):
@@ -84,14 +87,10 @@ class CircleHandler(BaseImageHandler):
                 self._save_image(darkened_image, f"{no_extension}png")
             self._archive_image(f"{no_extension}png")
 
-            # Write to log
-            self._append_processed_result_to_log(start, time.time(), as_png, self.log)
+            logger.info("%s processed in %.2fs", as_png, time.time() - start)
 
-        except Exception as e:
-            self._append_ad_hoc_comment_to_log(
-                f'{self.now.strftime("%d/%m/%Y %H:%M")}: UNEXPECTED ERROR PROCESSING {as_png}\n', self.log
-            )
-            self._append_ad_hoc_comment_to_log(f"    Reason: {e}\n")
+        except Exception:
+            logger.exception("Unexpected error processing %s", as_png)
 
     def resize(self, image):
         """Resize image maintaining aspect ratio."""
@@ -123,9 +122,7 @@ class CircleHandler(BaseImageHandler):
         is_coloured = filename_without_extension.count("&") == 1
 
         if not is_coloured:
-            self._append_ad_hoc_comment_to_log(
-                f"{filename_without_extension} colour not specified. Processing in B&W format", self.log
-            )
+            logger.info("No colour specified for %s, processing in B&W", filename_without_extension)
 
         return is_coloured
 

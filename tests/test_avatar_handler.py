@@ -6,6 +6,7 @@ Uses GIVEN/WHEN/THEN structure (Behaviour-Driven Development):
 - THEN: the expected outcome is asserted
 """
 
+import logging
 from unittest.mock import MagicMock
 
 from handling.avatar_base_handler import AvatarBaseHandler
@@ -58,16 +59,15 @@ class TestExecuteModelRequest:
         assert len(result) == 1
         assert result[0][0] == "good.png"
 
-    def test_failure_is_logged(self, avatar_handler, monkeypatch):
+    def test_failure_is_logged(self, avatar_handler, monkeypatch, caplog):
         # GIVEN an input image and an API that returns None
         mock_image = self._make_mock_image("img/broken.png")
         monkeypatch.setattr(AvatarBaseHandler, "_execute_edit_request", lambda self, p, i: None)
         monkeypatch.setattr(avatar_handler, "_save_avatar", lambda x: None)
-        logged = []
-        monkeypatch.setattr(avatar_handler, "_append_ad_hoc_comment_to_log", lambda msg: logged.append(msg))
 
         # WHEN executing the model request
-        avatar_handler._execute_model_request("prompt", [mock_image])
+        with caplog.at_level(logging.ERROR):
+            avatar_handler._execute_model_request("prompt", [mock_image])
 
         # THEN the failure should be logged with the filename
-        assert any("broken.png" in msg for msg in logged)
+        assert "broken.png" in caplog.text

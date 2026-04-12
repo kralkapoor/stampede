@@ -1,11 +1,14 @@
 """Avatar editing handler using OpenAI's image editing API."""
 
 import base64
+import logging
 import os
 from datetime import datetime
 
 from handling.avatar_base_handler import AvatarBaseHandler
 from settings.static_dicts import PROCESSED_DIR_AVATAR
+
+logger = logging.getLogger(__name__)
 
 
 class AvatarEditHandler(AvatarBaseHandler):
@@ -45,7 +48,7 @@ class AvatarEditHandler(AvatarBaseHandler):
         Returns:
             The result data from the API, or empty list on failure.
         """
-        self._append_ad_hoc_comment_to_log(f"Avatar edit with prompt: {user_prompt}")
+        logger.info("Editing avatar with prompt: %s", user_prompt)
 
         with open(f"img/{image_file}", "rb") as image_data:
             result = self._execute_edit_request(user_prompt, image_data)
@@ -55,7 +58,7 @@ class AvatarEditHandler(AvatarBaseHandler):
 
         self._save_edited_avatar(result)
         self._archive_image(image_file)
-        print(f"Archived input image: {image_file}")
+        logger.info("Archived input image: %s", image_file)
 
         return result
 
@@ -66,4 +69,4 @@ class AvatarEditHandler(AvatarBaseHandler):
         output_filename = f"{timestamp}_edited.png"
         with open(f"{PROCESSED_DIR_AVATAR}/{output_filename}", "wb") as f:
             f.write(image_bytes)
-        print(f"Saved edited image: {output_filename}")
+        logger.info("Saved edited image: %s", output_filename)

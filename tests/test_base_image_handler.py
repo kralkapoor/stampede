@@ -9,6 +9,8 @@ This structure makes tests read like specifications, so anyone can
 understand what the code is supposed to do without reading the implementation.
 """
 
+import logging
+
 from PIL import Image
 
 
@@ -116,20 +118,18 @@ class TestArchiveImage:
         # THEN it should be moved from img/ to img/zArchive/
         assert calls == [("img/test.png", "img/zArchive/test.png")]
 
-    def test_os_error_is_logged(self, base_handler, monkeypatch):
+    def test_os_error_is_logged(self, base_handler, monkeypatch, caplog):
         # GIVEN a file that can't be moved (e.g. locked by another process)
         monkeypatch.setattr(
             "handling.base_image_handler.os.replace", lambda s, d: (_ for _ in ()).throw(OSError("locked"))
         )
-        logged = []
-        monkeypatch.setattr(base_handler, "_append_ad_hoc_comment_to_log", lambda msg: logged.append(msg))
 
         # WHEN attempting to archive it
-        base_handler._archive_image("test.png")
+        with caplog.at_level(logging.ERROR):
+            base_handler._archive_image("test.png")
 
         # THEN the error should be logged instead of crashing
-        assert len(logged) == 1
-        assert "Unable to archive test.png" in logged[0]
+        assert "Failed to archive test.png" in caplog.text
 
 
 class TestRenameFile:
@@ -147,7 +147,6 @@ class TestRenameFile:
             raise FileExistsError
 
         monkeypatch.setattr("handling.base_image_handler.os.rename", raise_exists)
-        monkeypatch.setattr(base_handler, "_append_ad_hoc_comment_to_log", lambda *a: None)
 
         # WHEN attempting to rename
         # THEN it should return False rather than crashing

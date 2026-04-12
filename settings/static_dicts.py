@@ -24,7 +24,6 @@ RECT_PATHS = {
 VALID_FORMATS = ("jpg", "png", "jpeg", "webp")
 IMAGE_QUALITY = 100
 STANDARD_IMG_SIZE = None  # (200,200)
-LOG_LOCATION = "log.txt"
 
 IMAGE_DIR = "img"
 PROCESSED_DIR_CIRCLE = "img/Processed/Circles"
