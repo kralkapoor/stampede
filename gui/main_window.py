@@ -5,6 +5,8 @@ know about the GUI, and dialogs don't know about handlers — MainWindow
 coordinates between them so neither side carries the other's dependencies.
 """
 
+import sys
+
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QMessageBox, QPushButton, QVBoxLayout, QWidget
@@ -74,9 +76,11 @@ class MainWindow(QWidget):
 
     def _on_rectangles(self):
         self._run_with_processing_dialog("Processing...", "Processing rectangles...", self._rectangle_handler.execute)
+        sys.exit(0)
 
     def _on_circles(self):
         self._run_with_processing_dialog("Processing...", "Processing circles...", self._circle_handler.execute)
+        sys.exit(0)
 
     def _on_new_avatar(self):
         # Collect the prompt first. If the user cancels, we skip the API call entirely
@@ -92,6 +96,7 @@ class MainWindow(QWidget):
             "Generating avatar...",
             lambda: self._avatar_handler.process_avatar(user_prompt),
         )
+        sys.exit(0)
 
     def _on_edit_avatar(self):
         # Validate before showing the preview dialog. Fail fast so the user
@@ -115,3 +120,4 @@ class MainWindow(QWidget):
             "Processing image...",
             lambda: self._avatar_edit_handler.process_edit_avatar(user_prompt, image_file),
         )
+        sys.exit(0)
