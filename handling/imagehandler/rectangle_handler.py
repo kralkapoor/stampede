@@ -1,5 +1,6 @@
 """Rectangle image handler for processing rectangular stamps."""
 
+import logging
 import os
 import time
 
@@ -7,6 +8,8 @@ from PIL import Image, ImageDraw
 
 from handling.base_image_handler import BaseImageHandler
 from settings.static_dicts import COLOURS, PROCESSED_DIR_RECT, RECT_PATHS
+
+logger = logging.getLogger(__name__)
 
 
 class RectangleHandler(BaseImageHandler):
@@ -16,13 +19,11 @@ class RectangleHandler(BaseImageHandler):
         super().__init__()
         self.rect_paths = RECT_PATHS
 
-    def pool_handler(self):
-        super().pool_handler()
+    def execute(self):
+        super().execute()
         self._open_save_destination(PROCESSED_DIR_RECT)
-        return
 
-    # Override super.work_handler for rectangles specifically
-    def _work_handler(self, file):
+    def _handler_function(self, file):
         # Convert valid formats to png to allow RGBA
         start = time.time()
         no_extension = file[: file.index(".") + 1]
@@ -31,8 +32,7 @@ class RectangleHandler(BaseImageHandler):
         try:
             os.rename(f"img/{file}", f"img/{as_png}")
         except FileExistsError:
-            with open(self.log, "a", encoding="utf-8") as log:
-                log.write(f'{self.now.strftime("%d/%m/%Y, %H:%M:%S")}: "{as_png}" ERROR! FILE ALREADY EXISTS\n')
+            logger.error("Rename failed, file already exists: %s", as_png)
             return
         try:
             image = Image.open(f"img/{as_png}")
@@ -45,7 +45,7 @@ class RectangleHandler(BaseImageHandler):
             try:
                 custom_stamp = no_extension.count("&") == 1
             except ValueError:
-                print(f"Processing {as_png} as generic stamp - all colours")
+                logger.info("Processing %s as generic stamp - all colours", as_png)
 
             path = ""
             if custom_stamp:
@@ -68,8 +68,7 @@ class RectangleHandler(BaseImageHandler):
 
                 canvas.save(f"img/Processed/Rectangles/{path}/{as_png}", quality=100)
 
-                # Write to log
-                self._append_processed_result_to_log(start, time.time(), as_png, self.log)
+                logger.info("%s processed in %.2fs", as_png, time.time() - start)
 
             # If it's not a custom stamp, then create a copy in each standard colour
             else:
@@ -79,18 +78,13 @@ class RectangleHandler(BaseImageHandler):
                         f"img/Processed/Rectangles/{self.rect_paths[code]}/{no_extension[:-1]}&{code}.png",
                         quality=self.quality_val,
                     )
-
-                self._append_processed_result_to_log(start, time.time(), as_png, self.log)
+                logger.info("%s processed in %.2fs", as_png, time.time() - start)
 
             self._open_save_destination(PROCESSED_DIR_RECT)
-
-            # Archive
             self._archive_image(as_png)
 
-        except Exception as e:
-            with open(self.log, "a", encoding="utf-8") as log:
-                log.write(f'{self.now.strftime("%d/%m/%Y %H:%M")}: UNEXPECTED ERROR PROCESSING {as_png}\n')
-                log.write(f"    Reason: {e}\n")
+        except Exception:
+            logger.exception("Unexpected error processing %s", as_png)
 
 
 if __name__ == "__main__":

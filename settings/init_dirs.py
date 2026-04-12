@@ -36,7 +36,7 @@ def init_rect_dirs():
             pass
 
 
-def init_all():
+def init_directories():
     """Initialize all required directories."""
     init_base_dirs()
     init_rect_dirs()

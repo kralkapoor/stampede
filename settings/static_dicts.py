@@ -6,7 +6,7 @@ COLOURS = {
     "B": (100, 149, 237, 255),  # Cornflour Blue
     "P": (255, 105, 180, 255),  # Hot Pink
     "PP": (148, 0, 211, 255),  # Dark Violet
-    "O": (250, 165, 25), # Stampede Orange
+    "O": (250, 165, 25, 255),  # Stampede Orange
     "Black": (0, 0, 0, 255),  # Just Black
 }
 
@@ -24,7 +24,6 @@ RECT_PATHS = {
 VALID_FORMATS = ("jpg", "png", "jpeg", "webp")
 IMAGE_QUALITY = 100
 STANDARD_IMG_SIZE = None  # (200,200)
-LOG_LOCATION = "settings/log.txt"
 
 IMAGE_DIR = "img"
 PROCESSED_DIR_CIRCLE = "img/Processed/Circles"

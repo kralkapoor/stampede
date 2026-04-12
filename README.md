@@ -25,19 +25,15 @@ The application provides several processing modes through an intuitive GUI inter
 ## Usage
 1. **Setup Environment**: Configure your `.env` file with OpenAI credentials (see Environment Variables section)
 2. **Place Images**: Add images to the `/img` directory
-3. **Run Application**: Execute `python GUI.pyw` to launch the graphical interface
+3. **Run Application**: Execute `uv run python main.pyw` to launch the graphical interface
 4. **Select Processing Type**: Choose from Rectangles, Circles, Stickers, New Avatar, or Edit Avatar
 5. **Processed Results**: Find output images in `img/Processed/[ProcessingType]/`
 6. **Original Archive**: Original images are automatically moved to `img/zArchive/` after processing
 
 ## Libraries
-Stampede uses several key libraries to achieve the above features:
-- **Pillow**: The Python imaging library is the heavy lifter for this project, which allows image manipulation for the given files
-- **OpenAI**: Official OpenAI Python client for AI-powered avatar generation and editing
-- **Tkinter**: Built-in Python GUI framework for the user interface
-- **Threading**: Used for non-blocking UI during AI processing operations
-- **Multiprocessing**: Used to improve performance when processing multiple images concurrently. Currently set to use 4 processes for optimal performance
-- **Requests**: HTTP library for downloading AI-generated images from URLs
+- **Pillow**: Image manipulation and processing
+- **OpenAI**: AI-powered avatar generation and editing
+- **PySide6**: Qt6-based GUI framework
 
 ## Environment Variables
 Requires an OpenAI API key and, optionally, configuration for the project ID and organisation ID. Create a `.env` file in the root directory:
@@ -49,17 +45,29 @@ OPENAI_ORG_ID={your_org_id}
 
 ## Installation
 1. Clone the repository
-2. Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+2. Install [uv](https://docs.astral.sh/uv/getting-started/installation/)
 3. Install dependencies:
    ```bash
-   pip install -r requirements.txt
+   uv sync
+   ```
+   To include dev dependencies (pytest, linting, PyInstaller):
+   ```bash
+   uv sync --all-groups
    ```
 4. Configure environment variables (see above)
 5. Run the application:
    ```bash
-   python GUI.pyw
+   uv run python main.pyw
    ```
+
+## Building an Executable
+To distribute the application as a standalone executable that requires no Python or uv installation:
+1. Install all dependencies including dev tools:
+   ```bash
+   uv sync --all-groups
+   ```
+2. Build the executable:
+   ```bash
+   uv run pyinstaller --onedir --windowed --add-data "assets;assets" main.pyw
+   ```
+3. The self-contained `dist/main/` folder can be copied to a network share or another machine and run directly. The app will auto-create `img/` and processing subdirectories on first launch.
