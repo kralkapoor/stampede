@@ -3,6 +3,8 @@
 import logging
 import os
 
+from PIL import Image
+
 from settings.init_dirs import init_directories
 from settings.static_dicts import (IMAGE_QUALITY, STANDARD_IMG_SIZE,
                                    VALID_FORMATS)
@@ -48,7 +50,7 @@ class BaseImageHandler:
         files = [file for file in self.img_dir if self._is_valid_file_type(file)]
         return files
 
-    def _colour_sub(self, image, colour: tuple):
+    def _colour_sub(self, image: Image, colour: tuple) -> Image:
         """Method to replace pixels over a certain opacity with that of another specified colour
 
         Args:

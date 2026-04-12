@@ -62,7 +62,9 @@ class RectangleHandler(BaseImageHandler):
                     case "&PP":
                         canvas = self._colour_sub(canvas, COLOURS["PP"])  # dark violet
                     case "&O":
-                        canvas = self._colour_sub(canvas, COLOURS["O"])
+                        canvas = self._colour_sub(canvas, COLOURS["O"])  # stampede orange
+                    case "&Y":
+                        canvas = self._colour_sub(canvas, COLOURS["Y"])  # stampede yellow
                     case _:
                         canvas = self._colour_sub(canvas, COLOURS["Black"])  # default to black if not specified
 

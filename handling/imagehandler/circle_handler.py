@@ -38,7 +38,7 @@ class CircleHandler(BaseImageHandler):
         except Exception:
             logger.error("Failed to save image: %s", file_name_with_extension)
 
-    def _standardise_size(self, cropped_image):
+    def _standardise_size(self, cropped_image: Image):
         """Resize the given image to the configured standard size
 
         Args:
@@ -155,6 +155,8 @@ class CircleHandler(BaseImageHandler):
                 cropped = self._colour_sub(cropped, COLOURS["PP"])  # dark violet
             case "&O":
                 cropped = self._colour_sub(cropped, COLOURS["O"])  # stampede orange
+            case "&Y":
+                cropped = self._colour_sub(cropped, COLOURS["Y"])  # stampede yellow
             case "&E":  # make a copy for all colours
                 self.recolour_create_each_colour(cropped, filename_without_extension)
                 # exit out so we don't save the &E original picture in work handler
