@@ -730,6 +730,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "black" },
+    { name = "isort" },
     { name = "pyinstaller" },
     { name = "pylint" },
     { name = "pytest" },
@@ -746,6 +747,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "black" },
+    { name = "isort", specifier = ">=8.0.1" },
     { name = "pyinstaller", specifier = ">=6.19.0" },
     { name = "pylint" },
     { name = "pytest", specifier = ">=8.3.5" },

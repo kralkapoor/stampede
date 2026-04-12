@@ -17,4 +17,5 @@ dev = [
     "black",
     "pylint",
     "pyinstaller>=6.19.0",
+    "isort>=8.0.1",
 ]
