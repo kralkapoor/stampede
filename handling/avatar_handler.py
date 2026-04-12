@@ -2,10 +2,8 @@
 
 import base64
 import os
-import tkinter as tk
 
 from handling.avatar_base_handler import AvatarBaseHandler
-from handling.util.view_util import show_processing_dialog
 from settings.avatar_prompt import BASE_PROMPT
 from settings.static_dicts import IMAGE_DIR, PROCESSED_DIR_AVATAR
 
@@ -13,75 +11,30 @@ from settings.static_dicts import IMAGE_DIR, PROCESSED_DIR_AVATAR
 class AvatarHandler(AvatarBaseHandler):
     """Handles avatar image generation using OpenAI's API."""
 
-    def __init__(self, master: tk.Tk):
+    def __init__(self):
         """Initialize avatar handler."""
         super().__init__()
-        self.master_window = master
         self.prompt = BASE_PROMPT
 
-    def process_avatar(self):
-        """Process avatar generation requests."""
-        # Get user prompt with modifications, if any
-        user_prompt, window = self._get_prompt()
-        window.destroy()
-        print(f"prompt = {user_prompt}")
+    def process_avatar(self, user_prompt: str) -> list:
+        """Process avatar generation. Returns list of processed image tuples."""
         self._append_ad_hoc_comment_to_log(f"Avatar handling with prompt: {user_prompt}")
 
-        images_for_processing = self._fetch_imgs_as_binary()
+        images_for_processing = self._get_input_images()
+        try:
+            result = self._execute_model_request(user_prompt, images_for_processing)
+        finally:
+            for file in images_for_processing:
+                file.close()
 
-        show_processing_dialog(
-            self.master_window,
-            "Processing...",
-            "Generating avatar...\nPlease wait...",
-            lambda: self._execute_model_request(user_prompt, images_for_processing),
-        )
-
-        # Files opened earlier without the with(open) context manager, so requires manual closing 
         for file in images_for_processing:
-            file.close()
-
-        # Archive all processed images
-        for file in images_for_processing:
-            file_name = file.name.split("/")[-1]  # Only need the actual filename, not entire path
+            file_name = file.name.split("/")[-1]
             self._archive_image(file_name)
             print(f"Archived input image: {file_name}")
-        # Exit
-        self._exit_program()
 
-    def _get_prompt(self) -> tuple[str, tk.Toplevel]:
-        prompt_set = tk.BooleanVar(value=False)
+        return result
 
-        # Create a child window that spawns from the master frame
-        child_window = tk.Toplevel(self.master_window)
-        child_window.geometry("1000x400")
-        child_window.title("Avatar Processing Instructions")
-
-        # Bottom frame to place buttons
-        bottom_frame = tk.Frame(child_window)
-        bottom_frame.pack(side=tk.BOTTOM)
-
-        # Pack a text widget for hosting the prompt
-        text: tk.Text = tk.Text(child_window, wrap="word", width=1000, height=20)
-        text.insert(tk.INSERT, self.prompt)
-        text.pack()
-
-        # Set prompt_set to True to continue
-        ok: tk.Button = tk.Button(
-            master=bottom_frame, text="OK", command=lambda: prompt_set.set(True), width=7, background="green"
-        )
-        ok.pack(side=tk.RIGHT, expand=True, padx=5)
-        cancel: tk.Button = tk.Button(
-            master=bottom_frame, text="Cancel", command=self._exit_program, width=7, background="red"
-        )
-        cancel.pack(side=tk.LEFT, expand=True, padx=5)
-
-        # Wait on an ok before setting the prompt
-        ok.wait_variable(prompt_set)
-
-        return text.get("1.0", tk.END), child_window
-
-    def _fetch_imgs_as_binary(self) -> list:
-        # Get list of input files first
+    def _get_input_images(self) -> list:
         input_files = [
             open(f"{IMAGE_DIR}/{file}", "rb") for file in os.listdir(IMAGE_DIR) if self._is_valid_file_type(file)
         ]
@@ -111,6 +64,3 @@ class AvatarHandler(AvatarBaseHandler):
             with open(f"{PROCESSED_DIR_AVATAR}/{output_filename}", "wb") as f:
                 f.write(image_bytes)
             self._append_ad_hoc_comment_to_log(f"Saved avatar: {output_filename}")
-
-    def _exit_program(self):
-        exit(0)

@@ -19,8 +19,8 @@ class CircleHandler(BaseImageHandler):
     def __init__(self):
         super().__init__()
 
-    def pool_handler(self):
-        super().pool_handler()
+    def execute(self):
+        super().execute()
         self._open_save_destination(PROCESSED_DIR_CIRCLE)
 
     def _save_image(self, image_to_save, file_name_with_extension):
@@ -56,8 +56,7 @@ class CircleHandler(BaseImageHandler):
             print("exception on standardise_size")
             return None
 
-    # Override super.work_handler
-    def _work_handler(self, file):
+    def _handler_function(self, file):
         # Convert valid formats to png to allow RGBA
         start = time.time()
         no_extension = file[: file.index(".") + 1]
@@ -158,7 +157,7 @@ class CircleHandler(BaseImageHandler):
             case "&PP":
                 cropped = self._colour_sub(cropped, COLOURS["PP"])  # dark violet
             case "&O":
-                cropped = self._colour_sub(cropped, COLOURS["O"]) # stampede orange
+                cropped = self._colour_sub(cropped, COLOURS["O"])  # stampede orange
             case "&E":  # make a copy for all colours
                 self.recolour_create_each_colour(cropped, filename_without_extension)
                 # exit out so we don't save the &E original picture in work handler

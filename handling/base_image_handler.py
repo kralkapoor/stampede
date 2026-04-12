@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 from multiprocessing import Pool
 
-from settings.init_dirs import init_all
+from settings.init_dirs import init_directories
 from settings.static_dicts import IMAGE_QUALITY, LOG_LOCATION, STANDARD_IMG_SIZE, VALID_FORMATS
 
 
@@ -12,7 +12,7 @@ class BaseImageHandler:
     """Base class for all image handlers with multiprocessing and logging."""
 
     def __init__(self):
-        init_all()  # init prerequisite directories that are gitignored
+        init_directories()  # init prerequisite directories that are gitignored
         self.valid_formats = VALID_FORMATS
         self.quality_val = IMAGE_QUALITY
         self.standard_size = STANDARD_IMG_SIZE
@@ -25,16 +25,24 @@ class BaseImageHandler:
         self.log = LOG_LOCATION
         # self.max_cores = multiprocessing.cpu_count()
 
-    def pool_handler(self):
+    def execute(self):
         """
-        Performs the work for processing. Applies the work_handler method to each file in the images generator
+        Pool wrapper that performs the work for processing. Applies the _handler_function method to each files
         """
-        imgs = self._fetch_imgs_as_binary()
+        imgs = self._get_input_images()
         # Set to 4 to prevent DE lagging. Typically smaller quantities of pictures are loaded together.
         p = Pool(4)  # default processes = cpu_count().
-        p.map(self._work_handler, imgs)
+        p.map(self._handler_function, imgs)
 
-    def _fetch_imgs_as_binary(self):
+    def _handler_function(self, file):
+        """Defines the work to be done by the execute method. Requires an override from a child class
+
+        Args:
+            file (Image): Each image in the img generator
+        """
+        print("Requires override")
+
+    def _get_input_images(self) -> list[str]:
         """
         Loops through the img directory to identify suitable images
 
@@ -44,14 +52,6 @@ class BaseImageHandler:
         files = [file for file in self.img_dir if self._is_valid_file_type(file)]
         return files
 
-    def _work_handler(self, file):
-        """Defines the work to be done by the pool handler. Requires an override from a child class
-
-        Args:
-            file (Image): Each image in the img generator
-        """
-        print("Requires override")
-
     def _append_ad_hoc_comment_to_log(self, comment, log_file=LOG_LOCATION) -> None:
         with open(f"{log_file}", "a", encoding="utf-8") as log:
             log.write(comment)
@@ -60,8 +60,8 @@ class BaseImageHandler:
         """Append a message to the log saying whether the img was successfully processed or not
 
         Args:
-            start_time (float): the time that the pool handler was executed
-            end_time (float): the time the pool handler completed
+            start_time (float): the time that the execute method was executed
+            end_time (float): the time the execute method completed
             img_file (_type_): each image file in the img generator
             log_file (str): the name of the log in ./config
         """

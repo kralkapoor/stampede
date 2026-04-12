@@ -16,13 +16,12 @@ class RectangleHandler(BaseImageHandler):
         super().__init__()
         self.rect_paths = RECT_PATHS
 
-    def pool_handler(self):
-        super().pool_handler()
+    def execute(self):
+        super().execute()
         self._open_save_destination(PROCESSED_DIR_RECT)
         return
 
-    # Override super.work_handler for rectangles specifically
-    def _work_handler(self, file):
+    def _handler_function(self, file):
         # Convert valid formats to png to allow RGBA
         start = time.time()
         no_extension = file[: file.index(".") + 1]
@@ -79,12 +78,9 @@ class RectangleHandler(BaseImageHandler):
                         f"img/Processed/Rectangles/{self.rect_paths[code]}/{no_extension[:-1]}&{code}.png",
                         quality=self.quality_val,
                     )
-
                 self._append_processed_result_to_log(start, time.time(), as_png, self.log)
 
             self._open_save_destination(PROCESSED_DIR_RECT)
-
-            # Archive
             self._archive_image(as_png)
 
         except Exception as e:

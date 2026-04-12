@@ -6,7 +6,7 @@ COLOURS = {
     "B": (100, 149, 237, 255),  # Cornflour Blue
     "P": (255, 105, 180, 255),  # Hot Pink
     "PP": (148, 0, 211, 255),  # Dark Violet
-    "O": (250, 165, 25), # Stampede Orange
+    "O": (250, 165, 25),  # Stampede Orange
     "Black": (0, 0, 0, 255),  # Just Black
 }
 

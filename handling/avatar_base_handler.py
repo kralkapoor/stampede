@@ -1,7 +1,7 @@
 """Base avatar handler providing common OpenAI functionality."""
 
 from handling.base_image_handler import BaseImageHandler
-from handling.util.util import create_openai_client
+from handling.util.openai_util import create_openai_client
 from openai.types.image import Image
 
 
