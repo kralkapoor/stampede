@@ -1,7 +1,6 @@
 """Avatar generation prompt template."""
 
-BASE_PROMPT: str = """
-Convert the uploaded 3D avatar into a clean, high-contrast black-and-white line drawing suitable for a rubber stamp.
+BASE_PROMPT: str = """Convert the uploaded 3D avatar into a clean, high-contrast black-and-white line drawing suitable for a rubber stamp.
 
 • Style: Clean 2D vector line drawing with thick, uniform black outlines (no grayscale or shading).
 • Composition: IMPERATIVE: DO NOT EXTRAPOLATE LIMBS OR OTHER BODY PARTS. ONLY INCLUDE IN THE OUTPUT IMAGE WHAT WAS INCLUDED IN THE INPUT. Automatically scale or inset the avatar so the avatar fits comfortably within the frame, with a small margin of whitespace around.
