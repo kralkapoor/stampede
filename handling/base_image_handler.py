@@ -74,13 +74,13 @@ class BaseImageHandler:
         """Method to replace pixels over a certain opacity with that of another specified colour
 
         Args:
-            image (Image): The image to have it's pixels replaced
+            image (Image): The image to have its pixels replaced
             colour (tuple): New colour as a tuple (R,G,B,Opacity)
 
         Returns:
             Image: Recoloured image
         """
-        pixel_data = image.getdata()
+        pixel_data = image.get_flattened_data()
         new_image = []
 
         for data in pixel_data:
