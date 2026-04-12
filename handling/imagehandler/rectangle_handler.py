@@ -22,7 +22,6 @@ class RectangleHandler(BaseImageHandler):
     def execute(self):
         super().execute()
         self._open_save_destination(PROCESSED_DIR_RECT)
-        return
 
     def _handler_function(self, file):
         # Convert valid formats to png to allow RGBA

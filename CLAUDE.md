@@ -18,7 +18,7 @@ Image processing toolkit for the Stampede business. Automates resizing, recolour
 ### Key Patterns
 - **Mediator:** `gui/main_window.py` coordinates between dialogs and handlers. Handlers have no knowledge of GUI; dialogs have no knowledge of handlers.
 - **Template Method:** `BaseImageHandler.execute()` defines the processing flow; subclasses implement `_handler_function()`.
-- **Multiprocessing:** `BaseImageHandler` uses `Pool(4)` for batch image processing.
+- **Sequential processing:** `BaseImageHandler.execute()` iterates input images sequentially for simplicity.
 
 ### Handler Hierarchy
 ```

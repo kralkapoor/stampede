@@ -6,7 +6,7 @@ The caller decides what work to do; this dialog only handles presentation.
 """
 
 from PySide6.QtCore import QThread, QTimer, Signal
-from PySide6.QtWidgets import QDialog, QLabel, QVBoxLayout
+from PySide6.QtWidgets import QDialog, QLabel, QMessageBox, QVBoxLayout
 
 
 class ProcessingWorker(QThread):
@@ -82,10 +82,18 @@ class ProcessingDialog(QDialog):
         self.reject()
 
     def closeEvent(self, event):
-        # Closing mid-processing would orphan the background thread and could
-        # leave files in a partially-written state. Block the close until the
-        # worker finishes so the user can't accidentally lose work.
         if self._worker.isRunning():
-            event.ignore()
+            reply = QMessageBox.question(
+                self,
+                "Processing in progress",
+                "Processing is still running. Are you sure you want to close?",
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.No,
+            )
+            if reply == QMessageBox.Yes:
+                self._worker.wait()
+                super().closeEvent(event)
+            else:
+                event.ignore()
         else:
             super().closeEvent(event)

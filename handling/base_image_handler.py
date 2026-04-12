@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class BaseImageHandler:
-    """Base class for all image handlers with multiprocessing and logging."""
+    """Base class for all image handlers."""
 
     def __init__(self):
         init_directories()  # init prerequisite directories that are gitignored
@@ -31,12 +31,12 @@ class BaseImageHandler:
             self._handler_function(img)
 
     def _handler_function(self, file):
-        """Defines the work to be done by the execute method. Requires an override from a child class
+        """Defines the work to be done by the execute method. Requires an override from a child class.
 
         Args:
             file (Image): Each image in the img generator
         """
-        logger.warning("_handler_function not implemented by subclass")
+        raise NotImplementedError
 
     def _get_input_images(self) -> list[str]:
         """

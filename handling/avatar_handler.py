@@ -29,11 +29,9 @@ class AvatarHandler(AvatarBaseHandler):
         finally:
             for file in images_for_processing:
                 file.close()
-
-        for file in images_for_processing:
-            file_name = file.name.split("/")[-1]
-            self._archive_image(file_name)
-            logger.info("Archived input image: %s", file_name)
+                file_name = file.name.split("/")[-1]
+                self._archive_image(file_name)
+                logger.info("Archived input image: %s", file_name)
 
         return result
 
