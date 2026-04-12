@@ -2,7 +2,6 @@
 
 import logging
 import os
-from multiprocessing import Pool
 
 from settings.init_dirs import init_directories
 from settings.static_dicts import (IMAGE_QUALITY, STANDARD_IMG_SIZE,
@@ -26,13 +25,10 @@ class BaseImageHandler:
         self.img_dir = os.listdir("./img")
 
     def execute(self):
-        """
-        Pool wrapper that performs the work for processing. Applies the _handler_function method to each files
-        """
+        """Process all valid input images sequentially."""
         imgs = self._get_input_images()
-        # Set to 4 to prevent DE lagging. Typically smaller quantities of pictures are loaded together.
-        p = Pool(4)  # default processes = cpu_count().
-        p.map(self._handler_function, imgs)
+        for img in imgs:
+            self._handler_function(img)
 
     def _handler_function(self, file):
         """Defines the work to be done by the execute method. Requires an override from a child class
