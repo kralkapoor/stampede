@@ -1,6 +1,7 @@
 # Project specific
 */log.txt
 img/
+*.exe
 venv/
 env/
 virtualenv/

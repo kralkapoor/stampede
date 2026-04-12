@@ -68,6 +68,6 @@ To distribute the application as a standalone `.exe` that requires no Python or 
    ```
 2. Build the executable:
    ```bash
-   uv run pyinstaller --onefile --windowed main.pyw
+   uv run pyinstaller --onefile --windowed --distpath . main.pyw
    ```
-3. The executable will be created at `dist/main.exe` — this single file can be shared and run on any Windows machine without any additional setup.
+3. The executable will be created as `main.exe` in the project root. It must stay alongside the `assets/` and `img/` directories to function correctly.
