@@ -19,6 +19,7 @@ from handling.avatar_edit_handler import AvatarEditHandler
 from handling.avatar_handler import AvatarHandler
 from handling.imagehandler.circle_handler import CircleHandler
 from handling.imagehandler.rectangle_handler import RectangleHandler
+from settings.paths import resource_path
 
 
 class MainWindow(QWidget):
@@ -40,7 +41,7 @@ class MainWindow(QWidget):
         # Stampede Logo
         logo_label = QLabel()
         logo_label.setAlignment(Qt.AlignCenter)
-        pixmap = QPixmap("assets/logo.png")
+        pixmap = QPixmap(resource_path("assets/logo.png"))
         if not pixmap.isNull():
             logo_label.setPixmap(pixmap)
         layout.addWidget(logo_label)

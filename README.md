@@ -61,13 +61,13 @@ OPENAI_ORG_ID={your_org_id}
    ```
 
 ## Building an Executable
-To distribute the application as a standalone `.exe` that requires no Python or uv installation:
+To distribute the application as a standalone executable that requires no Python or uv installation:
 1. Install all dependencies including dev tools:
    ```bash
    uv sync --all-groups
    ```
 2. Build the executable:
    ```bash
-   uv run pyinstaller --onefile --windowed --distpath . main.pyw
+   uv run pyinstaller --onedir --windowed --add-data "assets;assets" main.pyw
    ```
-3. The executable will be created as `main.exe` in the project root. It must stay alongside the `assets/` and `img/` directories to function correctly.
+3. The self-contained `dist/main/` folder can be copied to a network share or another machine and run directly. The app will auto-create `img/` and processing subdirectories on first launch.

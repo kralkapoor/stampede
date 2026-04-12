@@ -1,5 +1,6 @@
 """Stampede Resizer — main entry point."""
 
+import os
 import sys
 from multiprocessing import freeze_support
 
@@ -9,6 +10,11 @@ from gui.main_window import MainWindow
 
 
 def main():
+    # When running as a frozen exe, set CWD to the exe's directory so that
+    # relative paths (img/, log.txt, etc.) resolve next to the executable.
+    if getattr(sys, "frozen", False):
+        os.chdir(os.path.dirname(sys.executable))
+
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()

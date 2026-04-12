@@ -1,0 +1,3 @@
+Failed to generate avatar for: failed.png
+Failed to generate avatar for: bad.png
+stamp. colour not specified. Processing in B&W formatstamp&R&G. colour not specified. Processing in B&W format

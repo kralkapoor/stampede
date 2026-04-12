@@ -8,7 +8,7 @@ Image processing toolkit for the Stampede business. Automates resizing, recolour
 - **Run tests:** `uv run pytest`
 - **Install deps:** `uv sync`
 - **Install all (inc. dev):** `uv sync --all-groups`
-- **Build exe:** `uv run pyinstaller --onefile --windowed main.pyw`
+- **Build exe:** `uv run pyinstaller --onedir --windowed --add-data "assets;assets" main.pyw`
 
 ## Architecture
 
