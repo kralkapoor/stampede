@@ -12,7 +12,6 @@ DIRS = (
     "img/Processed/Circles",
     "img/Processed/Stickers",
     "img/Processed/Avatars",
-    "img/Processed/Avatars/Exemplars",
 )
 
 

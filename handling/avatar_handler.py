@@ -3,12 +3,11 @@
 import base64
 import os
 import tkinter as tk
-from datetime import datetime
 
 from handling.avatar_base_handler import AvatarBaseHandler
 from handling.util.view_util import show_processing_dialog
 from settings.avatar_prompt import BASE_PROMPT
-from settings.static_dicts import EXAMPLE_DIR_AVATAR, IMAGE_DIR, PROCESSED_DIR_AVATAR
+from settings.static_dicts import IMAGE_DIR, PROCESSED_DIR_AVATAR
 
 
 class AvatarHandler(AvatarBaseHandler):
@@ -38,11 +37,7 @@ class AvatarHandler(AvatarBaseHandler):
         )
 
         # Archive all processed input images (files are now closed)
-        # Files are bytes here
         for file in images_for_processing:
-            # Don't want to archive the exeplar images
-            if EXAMPLE_DIR_AVATAR in file.name:
-                continue
             file_name = file.name.split("/")[-1]  # Only need the actual filename, not entire path
             self._archive_image(file_name)
             print(f"Archived input image: {file_name}")
@@ -86,36 +81,30 @@ class AvatarHandler(AvatarBaseHandler):
         input_files = [
             open(f"{IMAGE_DIR}/{file}", "rb") for file in os.listdir(IMAGE_DIR) if self._is_valid_file_type(file)
         ]
-        # Open exemplar images
-        exemplar_images = [
-            open(f"{EXAMPLE_DIR_AVATAR}/{file}", "rb")
-            for file in os.listdir(EXAMPLE_DIR_AVATAR)
-            if self._is_valid_file_type(file)
-        ]
+        return input_files
 
-        return exemplar_images + input_files
-
-    def _execute_model_request(self, user_prompt: str, images: list) -> list:
+    def _execute_model_request(self, user_prompt: str, input_images: list) -> list:
         try:
-            result_data = super()._execute_edit_request(user_prompt, images)
-            if not result_data:
-                return []
+            processed_images = []
 
-            self._save_avatar_data(result_data)
-            return result_data
+            for image in input_images:
+                res = super()._execute_edit_request(user_prompt, image)
+                processed_images.append((image.name, res))
+
+            self._save_avatar(processed_images)
+            return processed_images
 
         except Exception as e:
             self._append_ad_hoc_comment_to_log(f"Error in avatar generation: {str(e)}")
             print(f"Error in avatar generation: {str(e)}")
             return []
 
-    def _save_avatar_data(self, result_data):
-        for returned_image in result_data:
+    def _save_avatar(self, response_obj):
+        for input_path, returned_image in response_obj:
             image_base64 = returned_image.b64_json
             image_bytes = base64.b64decode(image_base64)
-            # Save the image to a file with timestamp prefix
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M")
-            output_filename = f"{timestamp}.png"
+            input_stem = os.path.splitext(input_path.split("/")[-1])[0]
+            output_filename = f"{input_stem}_avatar.png"
             with open(f"{PROCESSED_DIR_AVATAR}/{output_filename}", "wb") as f:
                 f.write(image_bytes)
             self._append_ad_hoc_comment_to_log(f"Saved avatar: {output_filename}")
