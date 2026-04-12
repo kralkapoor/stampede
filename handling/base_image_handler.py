@@ -35,30 +35,29 @@ class BaseImageHandler:
     def _handler_function(self, file):
         """Defines the work to be done by the execute method. Requires an override from a child class.
 
-        Args:
-            file (Image): Each image in the img generator
+        :param file: Each image in the img generator.
+        :type file: Image
         """
         raise NotImplementedError
 
     def _get_input_images(self) -> list[str]:
-        """
-        Loops through the img directory to identify suitable images
+        """Loops through the img directory to identify suitable images.
 
-        Returns:
-            List: of all the images for processing
+        :returns: All the images for processing.
+        :rtype: list[str]
         """
         files = [file for file in self.img_dir if self._is_valid_file_type(file)]
         return files
 
     def _colour_sub(self, image: Image, colour: tuple) -> Image:
-        """Method to replace pixels over a certain opacity with that of another specified colour
+        """Replace pixels over a certain opacity with that of another specified colour.
 
-        Args:
-            image (Image): The image to have its pixels replaced
-            colour (tuple): New colour as a tuple (R,G,B,Opacity)
-
-        Returns:
-            Image: Recoloured image
+        :param image: The image to have its pixels replaced.
+        :type image: Image
+        :param colour: New colour as a tuple (R,G,B,Opacity).
+        :type colour: tuple
+        :returns: Recoloured image.
+        :rtype: Image
         """
         pixel_data = image.get_flattened_data()
         new_image = []
@@ -91,10 +90,10 @@ class BaseImageHandler:
             return False
 
     def _archive_image(self, image_to_archive):
-        """Moves the image to the archive folder (currently hardcoded)
+        """Moves the image to the archive folder (currently hardcoded).
 
-        Args:
-            image_to_archive (Image): Image to archive
+        :param image_to_archive: Image to archive.
+        :type image_to_archive: Image
         """
         try:
             os.replace(f"img/{image_to_archive}", f"img/zArchive/{image_to_archive}")

@@ -69,3 +69,10 @@ img/              Working directory for input/output (gitignored)
 - Constants: `ALL_CAPS`
 - Handlers suffixed `_handler.py`, base classes prefixed `base_`
 - File I/O: input from `img/`, output to `img/Processed/{Type}/`, originals archived to `img/zArchive/`
+
+## Docstring Convention
+- Use **reST (reStructuredText)** format for all docstrings.
+- Parameters: `:param name: description` and `:type name: type`
+- Returns: `:returns: description` and `:rtype: type`
+- Raises: `:raises ExceptionType: description`
+- Single-line docstrings for trivial methods are acceptable.

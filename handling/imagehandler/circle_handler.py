@@ -13,11 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class CircleHandler(BaseImageHandler):
-    """Extends ImageHandler to specifically process circle shaped images used in the small, round stamp handles.
-
-    Args:
-        ImageHandlerBase (class): Base class from which to inherit save, logging, and multiprocessing functions.
-    """
+    """Extends ImageHandler to specifically process circle shaped images used in the small, round stamp handles."""
 
     def __init__(self):
         super().__init__()
@@ -27,11 +23,12 @@ class CircleHandler(BaseImageHandler):
         self._open_save_destination(PROCESSED_DIR_CIRCLE)
 
     def _save_image(self, image_to_save, file_name_with_extension):
-        """Saves the image for circle processing into a Circles subfolder
+        """Saves the image for circle processing into a Circles subfolder.
 
-        Args:
-            image_to_save (Image): Image to save
-            file_name_with_extension (str): New file name, with the filetype extension (e.g. png)
+        :param image_to_save: Image to save.
+        :type image_to_save: Image
+        :param file_name_with_extension: New file name, with the filetype extension (e.g. png).
+        :type file_name_with_extension: str
         """
         try:
             image_to_save.save(f"img/Processed/Circles/resized_{file_name_with_extension}", quality=self.quality_val)
@@ -39,13 +36,12 @@ class CircleHandler(BaseImageHandler):
             logger.error("Failed to save image: %s", file_name_with_extension)
 
     def _standardise_size(self, cropped_image: Image):
-        """Resize the given image to the configured standard size
+        """Resize the given image to the configured standard size.
 
-        Args:
-            cropped_image (Image): Image to crop
-
-        Returns:
-            Either the newly cropped image or nothing on exception
+        :param cropped_image: Image to crop.
+        :type cropped_image: Image
+        :returns: The newly cropped image, or None on exception.
+        :rtype: Image or None
         """
 
         # if the cfg size is not specified, just take the smallest dimension for best resolution

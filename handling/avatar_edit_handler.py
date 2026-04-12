@@ -21,11 +21,9 @@ class AvatarEditHandler(AvatarBaseHandler):
     def validate_single_image(self) -> str:
         """Check that exactly one image file exists in img directory.
 
-        Returns:
-            The image filename.
-
-        Raises:
-            ValueError: If zero or more than one image is found.
+        :returns: The image filename.
+        :rtype: str
+        :raises ValueError: If zero or more than one image is found.
         """
         image_files = [file for file in os.listdir("img") if self._is_valid_file_type(file)]
 
@@ -41,12 +39,11 @@ class AvatarEditHandler(AvatarBaseHandler):
     def process_edit_avatar(self, user_prompt: str, image_file: str):
         """Process avatar editing.
 
-        Args:
-            user_prompt: The editing instruction from the user.
-            image_file: Filename of the image in img/ to edit.
-
-        Returns:
-            The result data from the API, or empty list on failure.
+        :param user_prompt: The editing instruction from the user.
+        :type user_prompt: str
+        :param image_file: Filename of the image in img/ to edit.
+        :type image_file: str
+        :returns: The result data from the API, or None on failure.
         """
         logger.info("Editing avatar with prompt: %s", user_prompt)
 
