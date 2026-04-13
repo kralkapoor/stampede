@@ -8,7 +8,6 @@
 - **Transparent masks**: Place transparent masks atop images to create a circular style image for use in Cricut software
 - **AI Avatar Generation**: Create new avatars from scratch using OpenAI's image generation models
 - **AI Avatar Editing**: Edit existing avatars with custom prompts using OpenAI's image editing capabilities
-- **Logging**: Comprehensive logging is implemented for file tracking and debugging
 
 ## Processing Types
 The application provides several processing modes through an intuitive GUI interface:
@@ -16,17 +15,16 @@ The application provides several processing modes through an intuitive GUI inter
 ### Image Handlers
 - **Circles**: Processes all valid image files in the `/img` directory by resizing to a standard size and recolouring based on the file name suffix. A transparent mask is applied to convert the image into a circle shape.
 - **Rectangles**: `/img` files are processed into respective colours and organized into folders for tidiness
-- **Stickers**: Crops images and maintains aspect ratio to facilitate processing into circular stickers. Unlike the circles class, this will cut content from the image as opposed to preserving it.
 
-### Avatar Processing (NEW)
+### Avatar Processing
 - **New Avatar**: Generate brand new avatars using OpenAI's AI models with customizable prompts for creating rubber stamp-style line art
 - **Edit Avatar**: Modify existing avatars by placing a single image in the `/img` directory and providing custom editing instructions
 
 ## Usage
 1. **Setup Environment**: Configure your `.env` file with OpenAI credentials (see Environment Variables section)
 2. **Place Images**: Add images to the `/img` directory
-3. **Run Application**: Execute `uv run python main.pyw` to launch the graphical interface
-4. **Select Processing Type**: Choose from Rectangles, Circles, Stickers, New Avatar, or Edit Avatar
+3. **Run Application**: Execute `uv run python main.pyw` to launch the graphical interface, or the exe/binary if already created.
+4. **Select Processing Type**: Choose from Rectangles, Circles, New Avatar, or Edit Avatar
 5. **Processed Results**: Find output images in `img/Processed/[ProcessingType]/`
 6. **Original Archive**: Original images are automatically moved to `img/zArchive/` after processing
 
