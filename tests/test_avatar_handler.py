@@ -23,10 +23,10 @@ class TestExecuteModelRequest:
         # GIVEN one input image and a successful API response
         mock_image = self._make_mock_image("img/test.png")
         monkeypatch.setattr(AvatarBaseHandler, "_execute_edit_request", lambda self, p, i: mock_openai_response)
-        monkeypatch.setattr(avatar_handler, "_save_avatar", lambda x: None)
+        monkeypatch.setattr(avatar_handler, "_save_avatars", lambda x: None)
 
         # WHEN executing the model request
-        result = avatar_handler._execute_model_request("prompt", [mock_image])
+        result = avatar_handler._execute_model_requests("prompt", [mock_image])
 
         # THEN the result should contain the filename paired with the response
         assert len(result) == 1
@@ -36,10 +36,10 @@ class TestExecuteModelRequest:
         # GIVEN one input image and an API that returns None (failure)
         mock_image = self._make_mock_image("img/failed.png")
         monkeypatch.setattr(AvatarBaseHandler, "_execute_edit_request", lambda self, p, i: None)
-        monkeypatch.setattr(avatar_handler, "_save_avatar", lambda x: None)
+        monkeypatch.setattr(avatar_handler, "_save_avatars", lambda x: None)
 
         # WHEN executing the model request
-        result = avatar_handler._execute_model_request("prompt", [mock_image])
+        result = avatar_handler._execute_model_requests("prompt", [mock_image])
 
         # THEN no results should be collected
         assert len(result) == 0
@@ -50,10 +50,10 @@ class TestExecuteModelRequest:
         img_fail = self._make_mock_image("img/bad.png")
         responses = iter([mock_openai_response, None])
         monkeypatch.setattr(AvatarBaseHandler, "_execute_edit_request", lambda self, p, i: next(responses))
-        monkeypatch.setattr(avatar_handler, "_save_avatar", lambda x: None)
+        monkeypatch.setattr(avatar_handler, "_save_avatars", lambda x: None)
 
         # WHEN executing the model request
-        result = avatar_handler._execute_model_request("prompt", [img_ok, img_fail])
+        result = avatar_handler._execute_model_requests("prompt", [img_ok, img_fail])
 
         # THEN only the successful result should be collected
         assert len(result) == 1
@@ -63,11 +63,11 @@ class TestExecuteModelRequest:
         # GIVEN an input image and an API that returns None
         mock_image = self._make_mock_image("img/broken.png")
         monkeypatch.setattr(AvatarBaseHandler, "_execute_edit_request", lambda self, p, i: None)
-        monkeypatch.setattr(avatar_handler, "_save_avatar", lambda x: None)
+        monkeypatch.setattr(avatar_handler, "_save_avatars", lambda x: None)
 
         # WHEN executing the model request
         with caplog.at_level(logging.ERROR):
-            avatar_handler._execute_model_request("prompt", [mock_image])
+            avatar_handler._execute_model_requests("prompt", [mock_image])
 
         # THEN the failure should be logged with the filename
         assert "broken.png" in caplog.text

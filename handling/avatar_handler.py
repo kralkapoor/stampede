@@ -3,6 +3,7 @@
 import base64
 import logging
 import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from handling.avatar_base_handler import AvatarBaseHandler
 from settings.avatar_prompt import BASE_PROMPT
@@ -47,24 +48,36 @@ class AvatarHandler(AvatarBaseHandler):
             open(f"{IMAGE_DIR}/{file}", "rb") for file in os.listdir(IMAGE_DIR) if self._is_valid_file_type(file)
         ]
         return self.input_files
-    
+
     def _close_input_files(self) -> None:
         for file in self.input_files:
             file.close()
 
     def _execute_model_requests(self, user_prompt: str, input_images: list) -> list:
         processed_images = []
+        # Bind to local var because super() doesn't resolve correctly inside threads
+        edit_request = self._execute_edit_request
 
-        for image in input_images:
-            res = super()._execute_edit_request(user_prompt, image)
-            file_name = image.name.split("/")[-1]
-            if res is None:
-                logger.error("Failed to generate avatar for: %s", file_name)
-                continue
-            processed_images.append((file_name, res))
-        
+        # Make concurrent api calls to prevent waiting on sequential completion
+        with ThreadPoolExecutor() as executor:
+            futures = {}
+            for image in input_images:
+                future = executor.submit(edit_request, user_prompt, image)
+                file_name = image.name.split("/")[-1]
+                futures[future] = file_name
+
+            for future in as_completed(futures):
+                file_name = futures[future]
+                result = future.result()
+
+                if result is None:
+                    logger.error("Failed to generate avatar for: %s", file_name)
+                    continue
+
+                processed_images.append((file_name, result))
+
         return processed_images
-    
+
     def _save_avatars(self, processed_data: list[tuple]):
         for input_name, returned_image in processed_data:
             image_base64 = returned_image.b64_json
