@@ -28,7 +28,7 @@ class BaseImageHandler:
 
     def execute(self):
         """Process all valid input images sequentially."""
-        imgs = self._get_input_images()
+        imgs = self._get_input_files()
         for img in imgs:
             self._handler_function(img)
 
@@ -40,7 +40,7 @@ class BaseImageHandler:
         """
         raise NotImplementedError
 
-    def _get_input_images(self) -> list[str]:
+    def _get_input_files(self) -> list[str]:
         """Loops through the img directory to identify suitable images.
 
         :returns: All the images for processing.
@@ -89,16 +89,16 @@ class BaseImageHandler:
             logger.error("Rename failed, file already exists: %s", new_name)
             return False
 
-    def _archive_image(self, image_to_archive):
+    def _archive_image(self, file_name: str):
         """Moves the image to the archive folder (currently hardcoded).
 
-        :param image_to_archive: Image to archive.
-        :type image_to_archive: Image
+        :param file_name: Name of file under img/ to archive
+        :type file_name: str
         """
         try:
-            os.replace(f"img/{image_to_archive}", f"img/zArchive/{image_to_archive}")
+            os.replace(f"img/{file_name}", f"img/zArchive/{file_name}")
         except OSError as e:
-            logger.error("Failed to archive %s: %s", image_to_archive, e)
+            logger.error("Failed to archive %s: %s", file_name, e)
 
     def _is_valid_file_type(self, file_name: str):
         if not file_name:

@@ -18,30 +18,41 @@ class AvatarHandler(AvatarBaseHandler):
         """Initialize avatar handler."""
         super().__init__()
         self.prompt = BASE_PROMPT
+        self.input_files = []
 
-    def process_avatar(self, user_prompt: str) -> list:
-        """Process avatar generation. Returns list of processed image tuples."""
+    def process_avatar(self, user_prompt: str) -> None:
+        """Process avatar generation.
+
+        :param user_prompt: The generation prompt from the user.
+        :type user_prompt: str
+        """
         logger.info("Generating avatars with prompt: %s", user_prompt)
 
-        images_for_processing = self._get_input_images()
+        input_images = self._get_input_files()
         try:
-            result = self._execute_model_request(user_prompt, images_for_processing)
-        finally:
-            for file in images_for_processing:
-                file.close()
-                file_name = file.name.split("/")[-1]
+            processed_images = self._execute_model_requests(user_prompt, input_images)
+            # Close opened files to prevent conflicts during archiving
+            self._close_input_files()
+
+            self._save_avatars(processed_images)
+            for file_name, _ in processed_images:
                 self._archive_image(file_name)
                 logger.info("Archived input image: %s", file_name)
 
-        return result
+        except Exception as e:
+            logger.error("Failure during avatar processing: %s", e)
 
-    def _get_input_images(self) -> list:
-        input_files = [
+    def _get_input_files(self) -> list:
+        self.input_files = [
             open(f"{IMAGE_DIR}/{file}", "rb") for file in os.listdir(IMAGE_DIR) if self._is_valid_file_type(file)
         ]
-        return input_files
+        return self.input_files
+    
+    def _close_input_files(self) -> None:
+        for file in self.input_files:
+            file.close()
 
-    def _execute_model_request(self, user_prompt: str, input_images: list) -> list:
+    def _execute_model_requests(self, user_prompt: str, input_images: list) -> list:
         processed_images = []
 
         for image in input_images:
@@ -51,12 +62,11 @@ class AvatarHandler(AvatarBaseHandler):
                 logger.error("Failed to generate avatar for: %s", file_name)
                 continue
             processed_images.append((file_name, res))
-
-        self._save_avatar(processed_images)
+        
         return processed_images
-
-    def _save_avatar(self, response_obj):
-        for input_name, returned_image in response_obj:
+    
+    def _save_avatars(self, processed_data: list[tuple]):
+        for input_name, returned_image in processed_data:
             image_base64 = returned_image.b64_json
             image_bytes = base64.b64decode(image_base64)
             input_stem = os.path.splitext(input_name)[0]
