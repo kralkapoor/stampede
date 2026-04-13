@@ -42,6 +42,7 @@ class AvatarHandler(AvatarBaseHandler):
 
         except Exception as e:
             logger.error("Failure during avatar processing: %s", e)
+            raise e
 
     def _get_input_files(self) -> list:
         self.input_files = [

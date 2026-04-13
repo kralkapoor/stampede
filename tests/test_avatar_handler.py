@@ -48,8 +48,8 @@ class TestExecuteModelRequest:
         # GIVEN two images where the first succeeds and the second fails
         img_ok = self._make_mock_image("img/good.png")
         img_fail = self._make_mock_image("img/bad.png")
-        responses = iter([mock_openai_response, None])
-        monkeypatch.setattr(AvatarBaseHandler, "_execute_edit_request", lambda self, p, i: next(responses))
+        responses = {"img/good.png": mock_openai_response, "img/bad.png": None}
+        monkeypatch.setattr(AvatarBaseHandler, "_execute_edit_request", lambda self, p, i: responses[i.name])
         monkeypatch.setattr(avatar_handler, "_save_avatars", lambda x: None)
 
         # WHEN executing the model request

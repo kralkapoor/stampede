@@ -3,7 +3,7 @@
 import logging
 import os
 
-from PIL import Image
+from PIL.Image import Image
 
 from settings.init_dirs import init_directories
 from settings.static_dicts import (IMAGE_QUALITY, STANDARD_IMG_SIZE,
