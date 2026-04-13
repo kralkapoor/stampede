@@ -30,7 +30,7 @@ def patch_handler_init():
 @pytest.fixture
 def mock_openai_client():
     """Patches the OpenAI client factory so avatar handlers can be instantiated."""
-    with patch("handling.util.openai_util.create_openai_client", return_value=MagicMock()):
+    with patch("handling.avatar_base_handler.create_openai_client", return_value=MagicMock()):
         yield
 
 
