@@ -59,7 +59,8 @@ class AvatarHandler(AvatarBaseHandler):
         edit_request = self._execute_edit_request
 
         # Make concurrent api calls to prevent waiting on sequential completion
-        with ThreadPoolExecutor() as executor:
+        # Limit workers to avoid rate limiting when hitting the api with too many images
+        with ThreadPoolExecutor(max_workers=10) as executor:
             futures = {}
             for image in input_images:
                 future = executor.submit(edit_request, user_prompt, image)
