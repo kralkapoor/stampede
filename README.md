@@ -67,10 +67,15 @@ To distribute the application as a standalone executable that requires no Python
    uv sync --all-groups
    ```
 2. Build the executable:
-   ```bash
-   uv run pyinstaller --onedir --windowed --add-data "assets;assets" main.pyw
-   ```
-3. The self-contained `dist/main/` folder can be copied to a network share or another machine and run directly. The app will auto-create `img/` and processing subdirectories on first launch.
+   - **Windows:**
+     ```bash
+     uv run pyinstaller --name stampede --onedir --windowed --add-data "assets;assets" main.pyw
+     ```
+   - **Linux:**
+     ```bash
+     uv run pyinstaller --name stampede --onedir --windowed --add-data "assets:assets" main.pyw
+     ```
+3. The self-contained `dist/stampede/` folder can be copied to a network share or another machine and run directly. The app will auto-create `img/` and processing subdirectories on first launch.
 
 ### Automated Builds (CI/CD)
 A GitHub Actions workflow automatically builds the Windows exe on every push to `main`. The workflow runs tests first, then builds via PyInstaller on a Windows runner and uploads the result as a downloadable artifact.

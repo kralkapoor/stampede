@@ -21,10 +21,10 @@ jobs:
         run: uv run pytest
 
       - name: Build exe
-        run: uv run pyinstaller --onedir --windowed --add-data "assets;assets" main.pyw
+        run: uv run pyinstaller --name stampede --onedir --windowed --add-data "assets;assets" main.pyw
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: stampede-windows
-          path: dist/main/
+          path: dist/stampede/

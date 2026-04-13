@@ -8,13 +8,14 @@ Image processing toolkit for the Stampede business. Automates resizing, recolour
 - **Run tests:** `uv run pytest`
 - **Install deps:** `uv sync`
 - **Install all (inc. dev):** `uv sync --all-groups`
-- **Build exe:** `uv run pyinstaller --onedir --windowed --add-data "assets;assets" main.pyw`
+- **Build exe (Windows):** `uv run pyinstaller --name stampede --onedir --windowed --add-data "assets;assets" main.pyw`
+- **Build exe (Linux):** `uv run pyinstaller --name stampede --onedir --windowed --add-data "assets:assets" main.pyw`
 
 ## CI/CD
 - GitHub Actions workflow in `.github/workflows/build.yml`
 - Triggers on push to `main` or manual dispatch from the Actions tab
 - Runs tests, then builds a Windows exe via PyInstaller on a `windows-latest` runner
-- Uploads the `dist/main/` directory as a downloadable artifact (`stampede-windows`)
+- Uploads the `dist/stampede/` directory as a downloadable artifact (`stampede-windows`)
 
 ## Architecture
 
