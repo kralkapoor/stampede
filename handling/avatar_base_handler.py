@@ -10,7 +10,7 @@ from handling.util.openai_util import create_openai_client
 
 logger = logging.getLogger(__name__)
 
-# Ensure all image formats accepted by gpt-image-1.5 are registered —
+# Ensure all image formats accepted by the OpenAI image model are registered
 # Python on Windows doesn't always include webp, and other platforms may have gaps
 mimetypes.add_type("image/png", ".png")
 mimetypes.add_type("image/jpeg", ".jpg")
@@ -29,13 +29,14 @@ class AvatarBaseHandler(BaseImageHandler):
         """Execute OpenAI image edit request with common parameters."""
         try:
             result = self.client.images.edit(
-                model="gpt-image-1.5",
+                model="gpt-image-2",
                 image=image_data,
                 prompt=user_prompt,
-                background="transparent",
+                # Transparent bg not currently supported by gpt-image-2?
+                # background="transparent",
                 n=1,
                 quality="high",
-                size="auto",
+                size="1024x1024",
             )
             # Process a single avatar per request, i.e. each call is one in, one out
             return result.data[0]

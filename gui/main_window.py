@@ -71,10 +71,14 @@ class MainWindow(QWidget):
         Without this, each button handler would duplicate the dialog/messagebox logic.
         """
         dialog = ProcessingDialog(self, title, message, callback)
-        if dialog.exec() == ProcessingDialog.Accepted:
-            QMessageBox.information(self, "Success", "Processing completed successfully!")
-        else:
-            QMessageBox.critical(self, "Error", f"Error during processing: {dialog.error_message}")
+        dialog.exec()
+
+        # temp disable finished message boxes
+        # the app is not currently long-running, so the indicator for it comleting is it closing
+        # if dialog.exec() == ProcessingDialog.Accepted:
+        #     QMessageBox.information(self, "Success", "Processing completed successfully!")
+        # else:
+        #     QMessageBox.critical(self, "Error", f"Error during processing: {dialog.error_message}")
 
     def _on_rectangles(self):
         self._run_with_processing_dialog("Processing...", "Processing rectangles...", self._rectangle_handler.execute)
