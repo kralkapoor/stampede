@@ -1,8 +1,26 @@
-# Stampede Image Processing Tools
+<img src="assets/readme/stamps.jpg" width="60%" />
 
-#### Stampede Image Processing Tools is a Python project developed to automate various image processing tasks for the Stampede business. This toolkit includes capabilities for image resizing, recolouring, creating transparent masks, and AI-powered avatar generation.
+---
 
-## Features:
+# Stampede Stamp Top Processor
+
+![Example of the app GUI](assets/readme/gui.png)
+
+The purpose of this project is to enable the Stampede business to automate various image processing tasks. Currently, it supports two main workflows outlined below.
+
+Processing raw, black and white rubber stamp designs of any size into standardised, coloured, transparency-masked images. The processed pictures can be printed and cut by the Cricut Maker to be used as circular or rectangular stamp tops, automating part of the stamp making process.
+
+<p align="left">
+  <img alt="Example of a raw design" src="assets/readme/wheelie.png" width="26%" />
+  <img alt="Example of processed tops in various colours" src="assets/readme/processed.png" width="51%" />
+</p>
+
+Processing customer-supplied pictures into Bitmoji-style avatars suitable for a rubber stamp, or editing existing pictures using AI image models.
+
+![The GUI screen for avatar edits](assets/readme/darcy.png)
+
+## Features
+
 - **Image resizing**: Resizes images and maintains aspect ratios, or resizes to specific dimensions as specified in the cfg files
 - **Image recolouring**: Changes the colour of the images to the desired preset colour themes by replacing each pixel to a new colour
 - **Transparent masks**: Place transparent masks atop images to create a circular style image for use in Cricut software
@@ -10,17 +28,21 @@
 - **AI Avatar Editing**: Edit existing avatars with custom prompts using OpenAI's image editing capabilities
 
 ## Processing Types
-The application provides several processing modes through an intuitive GUI interface:
+
+The application provides several processing modes through a Qt GUI interface:
 
 ### Image Handlers
+
 - **Circles**: Processes all valid image files in the `/img` directory by resizing to a standard size and recolouring based on the file name suffix. A transparent mask is applied to convert the image into a circle shape.
 - **Rectangles**: `/img` files are processed into respective colours and organized into folders for tidiness
 
 ### Avatar Processing
+
 - **New Avatar**: Generate brand new avatars using OpenAI's AI models with customizable prompts for creating rubber stamp-style line art
 - **Edit Avatar**: Modify existing avatars by placing a single image in the `/img` directory and providing custom editing instructions
 
 ## Usage
+
 1. **Setup Environment**: Configure your `.env` file with OpenAI credentials (see Environment Variables section)
 2. **Place Images**: Add images to the `/img` directory
 3. **Run Application**: Execute `uv run python main.pyw` to launch the graphical interface, or the exe/binary if already created.
@@ -29,12 +51,15 @@ The application provides several processing modes through an intuitive GUI inter
 6. **Original Archive**: Original images are automatically moved to `img/zArchive/` after processing
 
 ## Libraries
+
 - **Pillow**: Image manipulation and processing
 - **OpenAI**: AI-powered avatar generation and editing
 - **PySide6**: Qt6-based GUI framework
 
 ## Environment Variables
-Requires an OpenAI API key and, optionally, configuration for the project ID and organisation ID. Create a `.env` file in the root directory:
+
+Requires an OpenAI API key for avatar workflows, and, optionally, configuration for the project ID and organisation ID. Create a `.env` file in the root directory:
+
 ```
 OPENAI_API_KEY={your_api_key}
 OPENAI_PROJECT_ID={your_project_id}
@@ -42,6 +67,7 @@ OPENAI_ORG_ID={your_org_id}
 ```
 
 ## Installation
+
 1. Clone the repository
 2. Install [uv](https://docs.astral.sh/uv/getting-started/installation/)
 3. Install dependencies:
@@ -59,7 +85,9 @@ OPENAI_ORG_ID={your_org_id}
    ```
 
 ## Building an Executable
+
 To distribute the application as a standalone executable that requires no Python or uv installation:
+
 1. Install all dependencies including dev tools:
    ```bash
    uv sync --all-groups
@@ -76,6 +104,7 @@ To distribute the application as a standalone executable that requires no Python
 3. The self-contained `dist/stampede/` folder can be copied to a network share or another machine and run directly. The app will auto-create `img/` and processing subdirectories on first launch.
 
 ### Automated Builds (CI/CD)
+
 A GitHub Actions workflow automatically builds the Windows exe on every push to `main`. The workflow runs tests first, then builds via PyInstaller on a Windows runner and uploads the result as a downloadable artifact.
 
 To download: **Actions tab → click the workflow run → Artifacts → `stampede-windows`**
