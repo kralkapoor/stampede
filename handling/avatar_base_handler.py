@@ -29,11 +29,10 @@ class AvatarBaseHandler(BaseImageHandler):
         """Execute OpenAI image edit request with common parameters."""
         try:
             result = self.client.images.edit(
-                model="gpt-image-2",
+                model="gpt-image-2.5-flare",
                 image=image_data,
                 prompt=user_prompt,
-                # Transparent bg not currently supported by gpt-image-2?
-                # background="transparent",
+                background="transparent",
                 n=1,
                 quality="high",
                 size="1024x1024",
